@@ -1,0 +1,82 @@
+plugins {
+	id 'java'
+	id 'maven-publish'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = "energy"
+group = "teamreborn"
+
+def getVersionName = { ->
+	def stdout = new ByteArrayOutputStream()
+	exec {
+		commandLine 'git', 'describe', '--tags'
+		standardOutput = stdout
+	}
+	return stdout.toString().trim()
+}
+
+version = getVersionName()
+logger.lifecycle("Building Energy: " + version)
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	testCompile 'junit:junit:4.12'
+}
+
+processResources {
+	inputs.property "version", project.version.toString()
+
+	from(sourceSets.main.resources.srcDirs) {
+		include "fabric.mod.json"
+		expand "version": project.version.toString()
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "fabric.mod.json"
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+jar {
+	from "LICENSE"
+}
+
+task sourcesJar(type: Jar) {
+	from sourceSets.main.allJava
+	archiveClassifier = 'sources'
+}
+
+build.dependsOn sourcesJar
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId 'teamreborn'
+			artifactId project.archivesBaseName
+			version project.version
+
+			from components.java
+			artifact sourcesJar
+		}
+	}
+	repositories {
+		maven {
+			url "http://mavenupload.modmuss50.me/"
+			if (project.hasProperty('mavenPass')) {
+				credentials {
+					username 'buildslave'
+					password project.getProperty('mavenPass')
+				}
+			}
+		}
+	}
+}
