@@ -1,6 +1,6 @@
 package team.reborn.energy;
 
-public interface EnergyStorage {
+public interface EnergyStorage extends EnergyHolder {
 
 	/**
 	 * Returns the currently stored energy
@@ -14,22 +14,6 @@ public interface EnergyStorage {
 	 */
 	void setStored(double amount);
 
-	/**
-	 * @return Returns the maximum amount of energy to be stored
-	 */
-	double getMaxStoredPower();
 
-	/**
-	 * @return the tier of this EnergyStorage
-	 */
-	EnergyTier getTier();
-
-	default double getMaxInput(EnergyFace face) {
-		return getTier().getMaxInput();
-	}
-
-	default double getMaxOutput(EnergyFace face) {
-		return getTier().getMaxOutput();
-	}
 
 }

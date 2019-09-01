@@ -1,14 +1,17 @@
 package team.reborn.energy.test;
 
 import org.junit.Test;
-import team.reborn.energy.Energy;
-import team.reborn.energy.EnergyFace;
-import team.reborn.energy.EnergyStorage;
-import team.reborn.energy.EnergyTier;
+import team.reborn.energy.*;
+import team.reborn.energy.test.minecraft.Item;
+import team.reborn.energy.test.minecraft.ItemStack;
+import team.reborn.energy.test.minecraft.PoweredItem;
 
 import java.math.BigInteger;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PowerTests {
 
@@ -221,13 +224,6 @@ public class PowerTests {
 		Energy.of(this);
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void testDuplicateHolders(){
-		//BigInteger was chosen as it was the first class that came to mind
-		Energy.registerHolder(BigInteger.class, bigInteger -> null);
-		Energy.registerHolder(BigInteger.class, bigInteger -> null);
-	}
-
 	@Test
 	public void testSidedness() {
 		//Source can only be accessed from the top
@@ -269,5 +265,49 @@ public class PowerTests {
 		assertEquals(100, moved, 0);
 		assertEquals(300, Energy.of(source).face(EnergyFace.TOP).getEnergy(), 0);
 		assertEquals(100, Energy.of(target).face(EnergyFace.BOTTOM).getEnergy(), 0);
+	}
+
+
+	//This test is setup using the dummy mc classes, its a more real world example of how things would work
+	@Test
+	public void minecraftTests() {
+
+		Item poweredItem = new PoweredItem();
+		ItemStack itemStack = new ItemStack(poweredItem);
+
+		Energy.registerHolder(object -> {
+			if(object instanceof ItemStack){
+				return ((ItemStack) object).getItem() instanceof EnergyHolder;
+			}
+			return false;
+		}, is -> {
+			final EnergyHolder energyHolder = (EnergyHolder) ((ItemStack) is).getItem();
+			return new EnergyStorage() {
+				@Override
+				public double getStored(EnergyFace face) {
+					return 100; //TODO read from NBT here.
+				}
+
+				@Override
+				public void setStored(double amount) {
+					//TODO this is where you would write to nbt
+				}
+
+				@Override
+				public double getMaxStoredPower() {
+					return energyHolder.getMaxStoredPower();
+				}
+
+				@Override
+				public EnergyTier getTier() {
+					return energyHolder.getTier();
+				}
+			};
+		});
+
+		assertTrue(Energy.valid(itemStack));
+
+		assertEquals(100, Energy.of(itemStack).getEnergy(), 0);
+
 	}
 }

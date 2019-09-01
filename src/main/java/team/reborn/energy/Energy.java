@@ -2,32 +2,33 @@ package team.reborn.energy;
 
 import java.util.HashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Energy {
 
-	private static final HashMap<Class<?>, Function<Object, EnergyStorage>> holderRegistry = new HashMap<>();
+	private static final HashMap<Predicate<Object>, Function<Object, EnergyStorage>> holderRegistry = new HashMap<>();
 
 	public static EnergyHandler of(Object object) {
 		if (object instanceof EnergyStorage) {
 			return new EnergyHandler((EnergyStorage) object);
 		}
 
-		return new EnergyHandler(holderRegistry.getOrDefault(object.getClass(), energyHolder -> {
-			throw new UnsupportedOperationException("Could not find holder for " + energyHolder.getClass().getName());
-		}).apply(object));
+		EnergyStorage energyStorage = holderRegistry.entrySet().stream().filter(entry -> entry.getKey().test(object)).findFirst().orElseGet(() -> {
+			throw new UnsupportedOperationException("object type not supported");
+		}).getValue().apply(object);
+		return new EnergyHandler(energyStorage);
 	}
 
-	/**
-	 * Used to register a holder for a specific class
-	 *
-	 * @param clazz the class that you wish to register a holder for
-	 * @param holderFunction A function that returns an energy storage for the supplied object
-	 */
-	public static <T> void registerHolder(Class<T> clazz, Function<T, EnergyStorage> holderFunction) {
-		if (holderRegistry.containsKey(clazz)) {
-			throw new RuntimeException(clazz.getName() + " already has a registered holder");
-		}
-		holderRegistry.put(clazz, (Function<Object, EnergyStorage>) holderFunction);
+	public static boolean valid(Object object){
+		return holderRegistry.keySet().stream().anyMatch(objectPredicate -> objectPredicate.test(object));
+	}
+
+	public static <T> void registerHolder(Class<T> clazz, Function<Object, EnergyStorage> holderFunction) {
+		registerHolder(object -> object.getClass() == clazz, holderFunction);
+	}
+
+	public static void registerHolder(Predicate<Object> supports, Function<Object, EnergyStorage> holderFunction) {
+		holderRegistry.put(supports, holderFunction);
 	}
 
 }
