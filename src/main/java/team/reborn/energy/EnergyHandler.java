@@ -39,6 +39,18 @@ public class EnergyHandler {
 		return energyInserted;
 	}
 
+	public void set(double amount){
+		if(amount > holder.getMaxStoredPower()){
+			amount = holder.getMaxStoredPower();
+		}
+		if(amount < 0){
+			amount = 0;
+		}
+		if (!simulate) {
+			holder.setStored(amount);
+		}
+	}
+
 	//Returns the max amount of energy that can be inputted
 	public double getMaxInput() {
 		return Math.min(holder.getMaxInput(face), holder.getMaxStoredPower() - holder.getStored(face));

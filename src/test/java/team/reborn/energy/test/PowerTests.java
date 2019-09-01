@@ -6,14 +6,27 @@ import team.reborn.energy.test.minecraft.Item;
 import team.reborn.energy.test.minecraft.ItemStack;
 import team.reborn.energy.test.minecraft.PoweredItem;
 
-import java.math.BigInteger;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PowerTests {
+
+	@Test
+	public void basicSet() {
+		TestingHolder energyHolder = new TestingHolder(0, 1000, EnergyTier.LOW);
+
+		Energy.of(energyHolder).set(100);
+
+		assertEquals(100,
+		             Energy.of(energyHolder).getEnergy()
+			, 0);
+
+		Energy.of(energyHolder).simulate().set(250);
+
+		assertEquals(100,
+		             Energy.of(energyHolder).getEnergy()
+			, 0);
+	}
 
 	@Test
 	public void basicExtract() {
