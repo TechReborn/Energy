@@ -8,11 +8,11 @@ public class Energy {
 
 	private static final HashMap<Predicate<Object>, Function<Object, EnergyStorage>> holderRegistry = new HashMap<>();
 
-	public static EnergyHandler of(Object object) {
-		if (object instanceof EnergyStorage) {
-			return new EnergyHandler((EnergyStorage) object);
-		}
+	static {
+		registerHolder(object -> object instanceof EnergyStorage, object -> (EnergyStorage) object);
+	}
 
+	public static EnergyHandler of(Object object) {
 		EnergyStorage energyStorage = holderRegistry.entrySet().stream().filter(entry -> entry.getKey().test(object)).findFirst().orElseGet(() -> {
 			throw new UnsupportedOperationException("object type not supported");
 		}).getValue().apply(object);

@@ -15,6 +15,8 @@ public class PowerTests {
 	public void basicSet() {
 		TestingHolder energyHolder = new TestingHolder(0, 1000, EnergyTier.LOW);
 
+		Energy.valid(energyHolder);
+
 		Energy.of(energyHolder).set(100);
 
 		assertEquals(100,
@@ -24,6 +26,18 @@ public class PowerTests {
 		Energy.of(energyHolder).simulate().set(250);
 
 		assertEquals(100,
+		             Energy.of(energyHolder).getEnergy()
+			, 0);
+
+		Energy.of(energyHolder).set(9999);
+
+		assertEquals(1000,
+		             Energy.of(energyHolder).getEnergy()
+			, 0);
+
+		Energy.of(energyHolder).set(-10);
+
+		assertEquals(0,
 		             Energy.of(energyHolder).getEnergy()
 			, 0);
 	}
