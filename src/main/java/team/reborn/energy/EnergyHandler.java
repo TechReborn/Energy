@@ -64,6 +64,10 @@ public class EnergyHandler {
 		return holder.getStored(side);
 	}
 
+	public double getMaxStored() {
+		return holder.getMaxStoredPower();
+	}
+
 	public EnergyMovement into(EnergyHandler target) {
 		return new EnergyMovement(this, target);
 	}

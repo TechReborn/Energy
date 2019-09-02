@@ -40,6 +40,10 @@ public class PowerTests {
 		assertEquals(0,
 		             Energy.of(energyHolder).getEnergy()
 			, 0);
+
+		assertEquals(1000,
+		             Energy.of(energyHolder).getMaxStored()
+			, 0);
 	}
 
 	@Test
