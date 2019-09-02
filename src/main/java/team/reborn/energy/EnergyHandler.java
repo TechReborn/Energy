@@ -5,7 +5,7 @@ public class EnergyHandler {
 	private final EnergyStorage holder;
 
 	private boolean simulate = false;
-	private EnergyFace face = EnergyFace.UNKNOWN;
+	private EnergySide side = EnergySide.UNKNOWN;
 
 	//Not to be called by a mod, use Energy.of
 	EnergyHandler(EnergyStorage holder) {
@@ -22,8 +22,8 @@ public class EnergyHandler {
 	 * @return the amount of energy actually extracted
 	 */
 	public double extract(double amount) {
-		double stored = holder.getStored(face);
-		double energyExtracted = Math.min(Math.min(stored, amount), holder.getMaxOutput(face));
+		double stored = holder.getStored(side);
+		double energyExtracted = Math.min(Math.min(stored, amount), holder.getMaxOutput(side));
 		if (energyExtracted > 0 && !simulate) {
 			holder.setStored(stored - energyExtracted);
 		}
@@ -31,8 +31,8 @@ public class EnergyHandler {
 	}
 
 	public double insert(double amount) {
-		double stored = holder.getStored(face);
-		double energyInserted = Math.min(Math.min(holder.getMaxStoredPower() - stored, amount), holder.getMaxInput(face));
+		double stored = holder.getStored(side);
+		double energyInserted = Math.min(Math.min(holder.getMaxStoredPower() - stored, amount), holder.getMaxInput(side));
 		if (!simulate) {
 			holder.setStored(stored + energyInserted);
 		}
@@ -53,23 +53,23 @@ public class EnergyHandler {
 
 	//Returns the max amount of energy that can be inputted
 	public double getMaxInput() {
-		return Math.min(holder.getMaxInput(face), holder.getMaxStoredPower() - holder.getStored(face));
+		return Math.min(holder.getMaxInput(side), holder.getMaxStoredPower() - holder.getStored(side));
 	}
 
 	public double getMaxOutput() {
-		return Math.min(holder.getMaxOutput(face), holder.getStored(face));
+		return Math.min(holder.getMaxOutput(side), holder.getStored(side));
 	}
 
 	public double getEnergy() {
-		return holder.getStored(face);
+		return holder.getStored(side);
 	}
 
 	public EnergyMovement into(EnergyHandler target) {
 		return new EnergyMovement(this, target);
 	}
 
-	public EnergyHandler face(EnergyFace face) {
-		this.face = face;
+	public EnergyHandler side(EnergySide side) {
+		this.side = side;
 		return this;
 	}
 }

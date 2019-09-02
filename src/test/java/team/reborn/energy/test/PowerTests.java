@@ -221,7 +221,7 @@ public class PowerTests {
 		Energy.registerHolder(DummyClass.class, dummyClass -> new EnergyStorage() {
 
 			@Override
-			public double getStored(EnergyFace face) {
+			public double getStored(EnergySide side) {
 				return 100;
 			}
 
@@ -254,44 +254,44 @@ public class PowerTests {
 	@Test
 	public void testSidedness() {
 		//Source can only be accessed from the top
-		TestingHolder source = new TestingHolder.Facing(500, 1000, EnergyTier.HIGH, EnergyFace.TOP);
+		TestingHolder source = new TestingHolder.Facing(500, 1000, EnergyTier.HIGH, EnergySide.UP);
 		//target can only be accessed form the bottom
-		TestingHolder target = new TestingHolder.Facing(0, 1000, EnergyTier.HIGH, EnergyFace.BOTTOM);
+		TestingHolder target = new TestingHolder.Facing(0, 1000, EnergyTier.HIGH, EnergySide.DOWN);
 
 		//No side provided, due to the impl of the Holder, this should return 0
 		assertEquals(0, Energy.of(source).getEnergy(), 0);
 		//Same test as before, just from the top
-		assertEquals(500, Energy.of(source).face(EnergyFace.TOP).getEnergy(), 0);
+		assertEquals(500, Energy.of(source).side(EnergySide.UP).getEnergy(), 0);
 
 		//Try an extract 100 energy out of the unknown side, should fail
 		assertEquals(0, Energy.of(source).extract(100), 0);
 		//Ensure it failed by checking we still have 500 energy
-		assertEquals(500, Energy.of(source).face(EnergyFace.TOP).getEnergy(), 0);
+		assertEquals(500, Energy.of(source).side(EnergySide.UP).getEnergy(), 0);
 
 		//Remove 100 energy from the allowed top side
-		assertEquals(100, Energy.of(source).face(EnergyFace.TOP).extract(100), 0);
+		assertEquals(100, Energy.of(source).side(EnergySide.UP).extract(100), 0);
 		//Test there is now only 400 energy in the the source
-		assertEquals(400, Energy.of(source).face(EnergyFace.TOP).getEnergy(), 0);
+		assertEquals(400, Energy.of(source).side(EnergySide.UP).getEnergy(), 0);
 
 
 		double moved = Energy.of(source)
-			.face(EnergyFace.TOP)
+			.side(EnergySide.UP)
 			.into(Energy.of(target)) //This should fail because no side is set on the target holder
 			.move(100);
 
 		assertEquals(0, moved, 0);
 
-		assertEquals(0, Energy.of(target).face(EnergyFace.TOP).getEnergy(), 0);
-		assertEquals(400, Energy.of(source).face(EnergyFace.TOP).getEnergy(), 0);
+		assertEquals(0, Energy.of(target).side(EnergySide.UP).getEnergy(), 0);
+		assertEquals(400, Energy.of(source).side(EnergySide.UP).getEnergy(), 0);
 
 		moved = Energy.of(source)
-			.face(EnergyFace.TOP)
-			.into(Energy.of(target).face(EnergyFace.BOTTOM)) //This should now work as the target can only be accessed from the bottom
+			.side(EnergySide.UP)
+			.into(Energy.of(target).side(EnergySide.DOWN)) //This should now work as the target can only be accessed from the bottom
 			.move(100);
 
 		assertEquals(100, moved, 0);
-		assertEquals(300, Energy.of(source).face(EnergyFace.TOP).getEnergy(), 0);
-		assertEquals(100, Energy.of(target).face(EnergyFace.BOTTOM).getEnergy(), 0);
+		assertEquals(300, Energy.of(source).side(EnergySide.UP).getEnergy(), 0);
+		assertEquals(100, Energy.of(target).side(EnergySide.DOWN).getEnergy(), 0);
 	}
 
 
@@ -311,7 +311,7 @@ public class PowerTests {
 			final EnergyHolder energyHolder = (EnergyHolder) ((ItemStack) is).getItem();
 			return new EnergyStorage() {
 				@Override
-				public double getStored(EnergyFace face) {
+				public double getStored(EnergySide side) {
 					return 100; //TODO read from NBT here.
 				}
 
@@ -335,6 +335,9 @@ public class PowerTests {
 		assertTrue(Energy.valid(itemStack));
 
 		assertEquals(100, Energy.of(itemStack).getEnergy(), 0);
+
+		assertEquals(EnergySide.DOWN, EnergySide.fromMinecraft(EnergySide.DOWN));
+		assertEquals(EnergySide.UNKNOWN, EnergySide.fromMinecraft(null));
 
 	}
 }

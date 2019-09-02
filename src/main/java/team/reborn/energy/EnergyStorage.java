@@ -5,7 +5,7 @@ public interface EnergyStorage extends EnergyHolder {
 	/**
 	 * Returns the currently stored energy
 	 */
-	double getStored(EnergyFace face);
+	double getStored(EnergySide face);
 
 	/**
 	 * Sets the stored energy to the provided amount
@@ -13,7 +13,5 @@ public interface EnergyStorage extends EnergyHolder {
 	 * @param amount the amount of energy to set
 	 */
 	void setStored(double amount);
-
-
 
 }

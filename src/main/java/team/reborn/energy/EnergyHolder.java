@@ -12,11 +12,11 @@ public interface EnergyHolder {
 	 */
 	EnergyTier getTier();
 
-	default double getMaxInput(EnergyFace face) {
+	default double getMaxInput(EnergySide side) {
 		return getTier().getMaxInput();
 	}
 
-	default double getMaxOutput(EnergyFace face) {
+	default double getMaxOutput(EnergySide side) {
 		return getTier().getMaxOutput();
 	}
 

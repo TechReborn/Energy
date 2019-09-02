@@ -1,6 +1,6 @@
 package team.reborn.energy.test;
 
-import team.reborn.energy.EnergyFace;
+import team.reborn.energy.EnergySide;
 import team.reborn.energy.EnergyStorage;
 import team.reborn.energy.EnergyTier;
 
@@ -23,7 +23,7 @@ public class TestingHolder implements EnergyStorage {
 	}
 
 	@Override
-	public double getStored(EnergyFace face) {
+	public double getStored(EnergySide side) {
 		return stored;
 	}
 
@@ -43,34 +43,34 @@ public class TestingHolder implements EnergyStorage {
 	}
 
 
-	//Only allows power access on the face provided
+	//Only allows power access on the side provided
 	public static class Facing extends TestingHolder {
 
-		private final EnergyFace face;
+		private final EnergySide side;
 
-		public Facing(double stored, double max, EnergyFace face) {
+		public Facing(double stored, double max, EnergySide side) {
 			super(stored, max);
-			this.face = face;
+			this.side = side;
 		}
 
-		public Facing(double stored, double max, EnergyTier tier, EnergyFace face) {
+		public Facing(double stored, double max, EnergyTier tier, EnergySide side) {
 			super(stored, max, tier);
-			this.face = face;
+			this.side = side;
 		}
 
 		@Override
-		public double getStored(EnergyFace face) {
-			return this.face == face ? super.getStored(face) : 0;
+		public double getStored(EnergySide side) {
+			return this.side == side ? super.getStored(side) : 0;
 		}
 
 		@Override
-		public double getMaxInput(EnergyFace face) {
-			return this.face == face ? super.getMaxInput(face) : 0;
+		public double getMaxInput(EnergySide side) {
+			return this.side == side ? super.getMaxInput(side) : 0;
 		}
 
 		@Override
-		public double getMaxOutput(EnergyFace face) {
-			return this.face == face ? super.getMaxOutput(face) : 0;
+		public double getMaxOutput(EnergySide side) {
+			return this.side == side ? super.getMaxOutput(side) : 0;
 		}
 	}
 
