@@ -12,13 +12,36 @@ public class Energy {
 		registerHolder(object -> object instanceof EnergyStorage, object -> (EnergyStorage) object);
 	}
 
+	/**
+	 *
+	 * Used to get an EnergyHandler from an object
+	 *
+	 * EnergyStorage is supported by default. other projects may add game specific holders
+	 *
+	 * If no compatible holder is found an UnsupportedOperationException will be thrown, use {@link #valid(Object)} valid} if you want to check if an object is supported
+	 *
+	 * @param object The input object, there must be a supported holder for the object
+	 * @return an EnergyHandler instance
+	 */
 	public static EnergyHandler of(Object object) {
-		EnergyStorage energyStorage = holderRegistry.entrySet().stream().filter(entry -> entry.getKey().test(object)).findFirst().orElseGet(() -> {
-			throw new UnsupportedOperationException("object type not supported");
-		}).getValue().apply(object);
+		EnergyStorage energyStorage = holderRegistry.entrySet().stream()
+			.filter(entry -> entry.getKey().test(object))
+			.findFirst()
+			.orElseGet(() -> {
+				throw new UnsupportedOperationException(String.format("object type (%s) not supported", object.getClass().getName()));
+			})
+			.getValue()
+			.apply(object);
 		return new EnergyHandler(energyStorage);
 	}
 
+	/**
+	 *
+	 * This is used to ensure there is a supported holder registered for the given object
+	 *
+	 * @param object An object that should be tested against, must be none null
+	 * @return
+	 */
 	public static boolean valid(Object object){
 		return holderRegistry.keySet().stream().anyMatch(objectPredicate -> objectPredicate.test(object));
 	}

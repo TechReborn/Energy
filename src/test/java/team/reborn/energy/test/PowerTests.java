@@ -6,7 +6,10 @@ import team.reborn.energy.test.minecraft.Item;
 import team.reborn.energy.test.minecraft.ItemStack;
 import team.reborn.energy.test.minecraft.PoweredItem;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class PowerTests {
@@ -342,6 +345,53 @@ public class PowerTests {
 
 		assertEquals(EnergySide.DOWN, EnergySide.fromMinecraft(EnergySide.DOWN));
 		assertEquals(EnergySide.UNKNOWN, EnergySide.fromMinecraft(null));
+
+	}
+
+	@Test
+	public void morePowerTests() {
+		TestingHolder sourceHolder = new TestingHolder(0, Double.MAX_VALUE, EnergyTier.INFINITE);
+		sourceHolder.setStored(Double.MAX_VALUE);
+
+		TestingHolder targetHolder = new TestingHolder(0, 1000, EnergyTier.LOW);
+
+		Energy.of(sourceHolder).into(Energy.of(targetHolder)).move();
+		assertEquals(32, Energy.of(targetHolder).getEnergy(), 0);
+
+		Energy.of(sourceHolder).into(Energy.of(targetHolder)).move();
+		assertEquals(64, Energy.of(targetHolder).getEnergy(), 0);
+
+	}
+
+	@Test
+	public void useTests() {
+		TestingHolder targetHolder = new TestingHolder(500, 1000, EnergyTier.LOW);
+
+		AtomicBoolean success = new AtomicBoolean(false);
+		AtomicBoolean failure = new AtomicBoolean(false);
+
+		//Should fail
+		Energy.of(targetHolder).use(750, () -> success.set(true), () -> failure.set(true));
+
+		assertFalse(success.get());
+		assertTrue(failure.get());
+		assertEquals(500, Energy.of(targetHolder).getEnergy(), 0);
+
+		//reset
+		failure.set(false);
+
+		//Should pass
+		Energy.of(targetHolder).use(250, () -> success.set(true), () -> failure.set(true));
+
+		assertTrue(success.get());
+		assertFalse(failure.get());
+
+		assertEquals(250, Energy.of(targetHolder).getEnergy(), 0);
+
+		assertTrue(Energy.of(targetHolder).use(250));
+		assertEquals(0, Energy.of(targetHolder).getEnergy(), 0);
+
+		assertFalse(Energy.of(targetHolder).use(250));
 
 	}
 }

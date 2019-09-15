@@ -39,6 +39,12 @@ public class EnergyHandler {
 		return energyInserted;
 	}
 
+	/**
+	 *
+	 * Sets the current amount of energy stored in the holder, it will now allow negative values, and will limit values greater than the maximum stored amount
+	 *
+	 * @param amount the amount of energy to set in the holder
+	 */
 	public void set(double amount){
 		if(amount > holder.getMaxStoredPower()){
 			amount = holder.getMaxStoredPower();
@@ -60,10 +66,23 @@ public class EnergyHandler {
 		return Math.min(holder.getMaxOutput(side), holder.getStored(side));
 	}
 
+	/**
+	 *
+	 * Used to get the current amount of energy in the holder.
+	 *
+	 * @return the current amount of energy in the holder
+	 *
+	 */
 	public double getEnergy() {
 		return holder.getStored(side);
 	}
 
+	/**
+	 *
+	 * Used to get the maximum amount of energy that the holder is allowed to hold.
+	 *
+	 * @return the maximum amount of energy that the holder can hold
+	 */
 	public double getMaxStored() {
 		return holder.getMaxStoredPower();
 	}
@@ -76,4 +95,30 @@ public class EnergyHandler {
 		this.side = side;
 		return this;
 	}
+
+	public boolean use(double amount){
+		if(getEnergy() >= amount){
+			if(!simulate){
+				set(getEnergy() - amount);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public void use(double amount, Runnable success, Runnable failure){
+		if(success == null){
+			throw new UnsupportedOperationException("success cannot be null");
+		}
+		if(use(amount)){
+			success.run();
+		} else {
+			failure.run();
+		}
+	}
+
+	public void use(double amount, Runnable success){
+		use(amount, success, null);
+	}
+
 }

@@ -41,7 +41,11 @@ public class EnergyMovement {
 			target.simulate();
 			source.simulate();
 		}
-		return target.insert(source.extract(Math.min(target.getMaxInput(), amount)));
+		double maxMove = Math.min(target.getMaxInput(), Math.min(source.getMaxOutput(), amount));
+		if(maxMove < 0){
+			return 0;
+		}
+		return target.insert(source.extract(maxMove));
 	}
 
 }
