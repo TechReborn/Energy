@@ -1,6 +1,6 @@
 package team.reborn.energy;
 
-public class EnergyHandler {
+public final class EnergyHandler {
 
 	private final EnergyStorage holder;
 
@@ -12,14 +12,27 @@ public class EnergyHandler {
 		this.holder = holder;
 	}
 
+	/**
+	 * Once called all future energy transactions will only be simulated. Returning the same value but without making the changes to the amount of energy in the holder.
+	 * @return an EnergyHandler instance
+	 */
 	public EnergyHandler simulate() {
 		simulate = true;
 		return this;
 	}
 
+	//Internal, used by EnergyMovement
+	boolean isSimulate(){
+		return simulate;
+	}
+
 	/**
-	 * @param amount the amount of energy to try and extract
-	 * @return the amount of energy actually extracted
+	 *
+	 * Extract upto the amount of energy provided, returns the amount of energy that was extracted.
+	 * This is limited by the max output of the holder, as well as the amount of energy that is held in the holder
+	 *
+	 * @param amount the maximum amount of energy to try to extract.
+	 * @return the amount of energy actually extracted from the holder
 	 */
 	public double extract(double amount) {
 		double stored = holder.getStored(side);
@@ -30,6 +43,13 @@ public class EnergyHandler {
 		return energyExtracted;
 	}
 
+	/**
+	 *
+	 *
+	 *
+	 * @param amount the max amount of energy to try and insert into the holder
+	 * @return the actual amount of energy inserted into the holder
+	 */
 	public double insert(double amount) {
 		double stored = holder.getStored(side);
 		double energyInserted = Math.min(Math.min(holder.getMaxStoredPower() - stored, amount), holder.getMaxInput(side));
@@ -105,5 +125,5 @@ public class EnergyHandler {
 		}
 		return false;
 	}
-	
+
 }

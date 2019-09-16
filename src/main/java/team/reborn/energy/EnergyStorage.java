@@ -3,7 +3,12 @@ package team.reborn.energy;
 public interface EnergyStorage extends EnergyHolder {
 
 	/**
+	 *
 	 * Returns the currently stored energy
+	 *
+	 * @param face The Side that is accessing the energy
+	 *
+	 * @return the amount of energy stored
 	 */
 	double getStored(EnergySide face);
 

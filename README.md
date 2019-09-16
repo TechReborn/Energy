@@ -2,13 +2,13 @@
 An Energy API used by TechReborn
 
 * Fully unit tested
-* Doesnt depend on anything (Not even minecraft)
+* Doesnt depend on anything (Not even minecraft) other than java 8
 
 Currently very WIP, the API may change at any time! I am very open to feedback and suggestions on the issue tracker.
 
 This may seem quite diffrenet from any energy API that you have seen before (code wise), as this is because I wanted to try something different.
 
-# Values
+# Reference Values
 
 * 1 coal = 4000
 * 1 plank = 750
@@ -55,6 +55,8 @@ RebornCore (Included in TechReborn) registers a holder for Minecraft's `ItemStac
 
 ## EnergyHandler
 
+An instance of EnergyHandler can be got from `Energy.of()`
+
 ### getEnergy
 
 Returns the current amount of stored energy
@@ -73,13 +75,19 @@ double energy = Energy.of(object).getEnergy()
 
 ### set
 
-Used to set the amount of energy stored in the block
+Set the amount of energy stored in the holder
 
 ```java
 Energy.of(object).set(250)
 ```
 
 ### extract
+
+Extract upto the amount of energy provided, returns the amount of energy that was extracted. This is limited by the max output of the holder, as well as the amount of energy that is held in the holder. Returns the the amount of energy actually extracted from the holder.
+
+```java
+double extracted = Energy.of(object).extract(20)
+```
 
 ### insert
 

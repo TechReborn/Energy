@@ -2,7 +2,7 @@ package team.reborn.energy;
 
 import java.util.function.BooleanSupplier;
 
-public class EnergyMovement {
+public final class EnergyMovement {
 
 	private final EnergyHandler source;
 	private final EnergyHandler target;
@@ -36,8 +36,8 @@ public class EnergyMovement {
 		if (disabled) {
 			return 0;
 		}
-		//TODO ensure both are being simulated
-		if (simulate) {
+		if (simulate || target.isSimulate() || source.isSimulate()) {
+			simulate = true;
 			target.simulate();
 			source.simulate();
 		}

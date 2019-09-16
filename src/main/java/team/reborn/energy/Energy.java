@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class Energy {
+public final class Energy {
 
 	private static final HashMap<Predicate<Object>, Function<Object, EnergyStorage>> holderRegistry = new HashMap<>();
 
@@ -40,7 +40,7 @@ public class Energy {
 	 * This is used to ensure there is a supported holder registered for the given object
 	 *
 	 * @param object An object that should be tested against, must be none null
-	 * @return
+	 * @return turns true if the supplied object supports energy.
 	 */
 	public static boolean valid(Object object){
 		return holderRegistry.keySet().stream().anyMatch(objectPredicate -> objectPredicate.test(object));

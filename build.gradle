@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id 'maven-publish'
+	id 'jacoco'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -55,6 +56,14 @@ task sourcesJar(type: Jar) {
 	archiveClassifier = 'sources'
 }
 
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compile
+}
+
+build.dependsOn jacocoTestReport
+build.dependsOn test
+build.dependsOn javadoc
 build.dependsOn sourcesJar
 
 publishing {
