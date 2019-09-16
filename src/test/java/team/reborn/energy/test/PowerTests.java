@@ -6,8 +6,6 @@ import team.reborn.energy.test.minecraft.Item;
 import team.reborn.energy.test.minecraft.ItemStack;
 import team.reborn.energy.test.minecraft.PoweredItem;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -367,24 +365,33 @@ public class PowerTests {
 	public void useTests() {
 		TestingHolder targetHolder = new TestingHolder(500, 1000, EnergyTier.LOW);
 
-		AtomicBoolean success = new AtomicBoolean(false);
-		AtomicBoolean failure = new AtomicBoolean(false);
+		boolean success = false;
+		boolean failure = false;
 
 		//Should fail
-		Energy.of(targetHolder).use(750, () -> success.set(true), () -> failure.set(true));
+		if(Energy.of(targetHolder).use(750)){
+			success = true;
+		} else {
+			failure = true;
+		}
 
-		assertFalse(success.get());
-		assertTrue(failure.get());
+		assertFalse(success);
+		assertTrue(failure);
+
 		assertEquals(500, Energy.of(targetHolder).getEnergy(), 0);
 
 		//reset
-		failure.set(false);
+		failure = false;
 
 		//Should pass
-		Energy.of(targetHolder).use(250, () -> success.set(true), () -> failure.set(true));
+		if(Energy.of(targetHolder).use(250)){
+			success = true;
+		} else {
+			failure = true;
+		}
 
-		assertTrue(success.get());
-		assertFalse(failure.get());
+		assertTrue(success);
+		assertFalse(failure);
 
 		assertEquals(250, Energy.of(targetHolder).getEnergy(), 0);
 

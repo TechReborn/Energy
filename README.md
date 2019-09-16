@@ -95,10 +95,6 @@ Energy.of(object).set(250)
 
 ### use(amount)
 
-### use (amount, success)
-
-### use (amount, success, failure)
-
 ## EnergyMovement
 
 ### move

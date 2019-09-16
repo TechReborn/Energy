@@ -105,20 +105,5 @@ public class EnergyHandler {
 		}
 		return false;
 	}
-
-	public void use(double amount, Runnable success, Runnable failure){
-		if(success == null){
-			throw new UnsupportedOperationException("success cannot be null");
-		}
-		if(use(amount)){
-			success.run();
-		} else {
-			failure.run();
-		}
-	}
-
-	public void use(double amount, Runnable success){
-		use(amount, success, null);
-	}
-
+	
 }
