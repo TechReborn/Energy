@@ -3,14 +3,20 @@
   "id": "team_reborn_energy",
   "version": "${version}",
   "name": "Energy",
-  "description": "An energy API",
+  "description": "The Energy API created and used by Team Reborn",
   "authors": [
-    "TeamReborn"
+    "Team Reborn",
+    "modmuss50"
   ],
   "contact": {
     "homepage": "https://github.com/TechReborn/Energy",
-    "sources": "https://github.com/TechReborn/Energy"
+    "sources": "https://github.com/TechReborn/Energy",
+    "issues": "https://github.com/TechReborn/Energy/issues"
   },
   "license": "WTFPL",
-  "environment": "*"
+  "environment": "*",
+  "icon": "assets/team_reborn_energy/icon.png",
+  "custom": {
+    "modmenu:api": true
+  }
 }
