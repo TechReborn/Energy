@@ -1,5 +1,7 @@
 package team.reborn.energy;
 
+import net.minecraft.util.math.Direction;
+
 public final class EnergyHandler {
 
 	private final EnergyStorage holder;
@@ -114,6 +116,10 @@ public final class EnergyHandler {
 	public EnergyHandler side(EnergySide side) {
 		this.side = side;
 		return this;
+	}
+
+	public EnergyHandler side(Direction direction) {
+		return side(EnergySide.fromMinecraft(direction));
 	}
 
 	public boolean use(double amount){

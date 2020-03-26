@@ -1,8 +1,23 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			name = "Fabric"
+			url = "https://maven.fabricmc.net/"
+		}
+	}
+	dependencies {
+		classpath "net.fabricmc:fabric-loom:0.2.7-SNAPSHOT"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'maven-publish'
 	id 'jacoco'
 }
+
+apply plugin: net.fabricmc.loom.LoomGradlePlugin
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -27,6 +42,11 @@ repositories {
 }
 
 dependencies {
+	minecraft "com.mojang:minecraft:1.15.2"
+	mappings "net.fabricmc:yarn:1.15.2+build.2:v2"
+
+	modImplementation  "net.fabricmc:fabric-loader:0.7.5+build.178"
+
 	testCompile 'junit:junit:4.12'
 }
 
@@ -52,13 +72,12 @@ jar {
 }
 
 task sourcesJar(type: Jar) {
-	from sourceSets.main.allJava
+	from sourceSets.main.allSource
 	archiveClassifier = 'sources'
 }
 
 javadoc {
 	source = sourceSets.main.allJava
-	classpath = configurations.compile
 }
 
 build.dependsOn jacocoTestReport
@@ -73,8 +92,12 @@ publishing {
 			artifactId project.archivesBaseName
 			version project.version
 
-			from components.java
-			artifact sourcesJar
+			artifact(remapJar) {
+				builtBy remapJar
+			}
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
 		}
 	}
 	repositories {

@@ -1,12 +1,13 @@
 # Energy
+
 An Energy API used by TechReborn
 
 * Fully unit tested
-* Doesnt depend on anything (Not even minecraft) other than java 8
+* Depends on Minecraft and fabric-loader
 
-Currently very WIP, the API may change at any time! I am very open to feedback and suggestions on the issue tracker.
+Currently WIP, the API may change at any time! I am very open to feedback and suggestions on the issue tracker.
 
-This may seem quite diffrenet from any energy API that you have seen before (code wise), as this is because I wanted to try something different.
+This may seem quite different from any energy API that you have seen before (code wise), as this is because I wanted to try something different.
 
 # Reference Values
 
@@ -15,11 +16,13 @@ This may seem quite diffrenet from any energy API that you have seen before (cod
 
 # Including the API in your project
 
+![Latest version](https://img.shields.io/github/v/tag/TechReborn/Energy?label=Latest%20Version)
+
 Add the following into your dependencies block in build.gradle
 
 ```groovy
-compile 'teamreborn:energy:+'
-include 'teamreborn:energy:+'
+modApi 'teamreborn:energy:<latest_version>'
+include 'teamreborn:energy:<latest_version>'
 ```
 
 ## Basic Example
@@ -28,9 +31,9 @@ This basic example shows how to move energy from place to another, the source or
 
 ```java
 Energy.of(source)
-	.side(EnergySide.fromMinecraft(side))
+	.side(side)
 	.into(
-	   Energy.of(target).side(EnergySide.fromMinecraft(side.getOpposite()))
+	   Energy.of(target).side(side.getOpposite())
 	)
 	.move();
 ```
@@ -90,6 +93,13 @@ double extracted = Energy.of(object).extract(20)
 ```
 
 ### insert
+
+Insert upto the amount of energy provided, returns the amount of energy that was inserted. This is limited by the max input of the holder, as well as the amount of free space in the hold. Returns the the amount of energy actually inserted from the holder.
+
+
+```java
+double inserted = Energy.of(object).insert(20)
+```
 
 ### getMaxInput
 
