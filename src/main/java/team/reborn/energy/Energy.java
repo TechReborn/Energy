@@ -16,7 +16,7 @@ public final class Energy {
 	private static final Predicate TRUE = o -> true;
 
 	static {
-		registerHolder(-5, object -> object instanceof EnergyStorage, object -> (EnergyStorage) object);
+		registerHolder(EnergyStorage.class, -5, object -> object);
 	}
 
 	/**
