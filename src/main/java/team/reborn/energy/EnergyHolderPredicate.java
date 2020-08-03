@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 public interface EnergyHolderPredicate extends Predicate<Object>, Comparable<EnergyHolderPredicate> {
     /**
-     * @return the priority of the holder provider.
+     * @return The priority of the holder provider. The higher the value the more important it is.
      */
     default double getPriority() {
         return 0;
