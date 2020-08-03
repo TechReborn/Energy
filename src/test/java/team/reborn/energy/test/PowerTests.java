@@ -6,9 +6,7 @@ import team.reborn.energy.test.minecraft.Item;
 import team.reborn.energy.test.minecraft.ItemStack;
 import team.reborn.energy.test.minecraft.PoweredItem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PowerTests {
 
@@ -344,6 +342,91 @@ public class PowerTests {
 		assertEquals(EnergySide.DOWN, EnergySide.fromMinecraft(EnergySide.DOWN));
 		assertEquals(EnergySide.UNKNOWN, EnergySide.fromMinecraft(null));
 
+	}
+	
+	@Test
+	public void holderPriorityTests() {
+		class SpecialHolder implements EnergyStorage {
+			private double stored = 50;
+			@Override
+			public double getMaxStoredPower() {
+				return 1000;
+			}
+
+			@Override
+			public EnergyTier getTier() {
+				return EnergyTier.EXTREME;
+			}
+
+			@Override
+			public double getStored(EnergySide face) {
+				return stored;
+			}
+
+			@Override
+			public void setStored(double amount) {
+				this.stored = amount;
+			}
+		}
+		
+		class SpecialHolderResizer implements EnergyStorage {
+			private final double scale;
+			private final SpecialHolder holder;
+
+			public SpecialHolderResizer(double scale, SpecialHolder holder) {
+				this.scale = scale;
+				this.holder = holder;
+			}
+
+			@Override
+			public double getStored(EnergySide face) {
+				return holder.getStored(face) * scale;
+			}
+
+			@Override
+			public void setStored(double amount) {
+				holder.setStored(amount / scale);
+			}
+
+			@Override
+			public double getMaxStoredPower() {
+				return holder.getMaxStoredPower() * scale;
+			}
+
+			@Override
+			public EnergyTier getTier() {
+				return holder.getTier();
+			}
+		}
+
+		SpecialHolder specialHolder = new SpecialHolder();
+		
+		assertEquals(50, Energy.of(specialHolder).getEnergy(), 0);
+		assertEquals(1000, Energy.of(specialHolder).getMaxStored(), 0);
+
+		Energy.registerHolder(o -> o instanceof SpecialHolder, o -> {
+			final SpecialHolder holder = (SpecialHolder) o;
+			return new SpecialHolderResizer(100, holder);
+		});
+
+		assertEquals(5000, Energy.of(specialHolder).getEnergy(), 0);
+		assertEquals(100000, Energy.of(specialHolder).getMaxStored(), 0);
+
+		Energy.registerHolder(10, o -> o instanceof SpecialHolder, o -> {
+			final SpecialHolder holder = (SpecialHolder) o;
+			return new SpecialHolderResizer(10000, holder);
+		});
+
+		assertEquals(500000, Energy.of(specialHolder).getEnergy(), 0);
+		assertEquals(10000000, Energy.of(specialHolder).getMaxStored(), 0);
+
+		Energy.registerHolder(-7, o -> o instanceof SpecialHolder, o -> {
+			final SpecialHolder holder = (SpecialHolder) o;
+			return new SpecialHolderResizer(2, holder);
+		});
+
+		assertEquals(500000, Energy.of(specialHolder).getEnergy(), 0);
+		assertEquals(10000000, Energy.of(specialHolder).getMaxStored(), 0);
 	}
 
 	@Test

@@ -1,19 +1,20 @@
 package team.reborn.energy;
 
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class Energy {
 
-	private static final HashMap<Predicate<Object>, Function<Object, EnergyStorage>> holderRegistry = new HashMap<>();
+	private static final Map<EnergyHolderPredicate, Function<Object, EnergyStorage>> holderRegistry = new TreeMap<>(Comparator.reverseOrder());
 
 	static {
-		registerHolder(object -> object instanceof EnergyStorage, object -> (EnergyStorage) object);
+		registerHolder(-5, object -> object instanceof EnergyStorage, object -> (EnergyStorage) object);
 	}
 
 	/**
-	 *
 	 * Used to get an EnergyHandler from an object
 	 *
 	 * EnergyStorage is supported by default. other projects may add game specific holders
@@ -36,13 +37,12 @@ public final class Energy {
 	}
 
 	/**
-	 *
 	 * This is used to ensure there is a supported holder registered for the given object
 	 *
 	 * @param object An object that should be tested against, must be none null
 	 * @return turns true if the supplied object supports energy.
 	 */
-	public static boolean valid(Object object){
+	public static boolean valid(Object object) {
 		return holderRegistry.keySet().stream().anyMatch(objectPredicate -> objectPredicate.test(object));
 	}
 
@@ -50,7 +50,23 @@ public final class Energy {
 		registerHolder(object -> object.getClass() == clazz, holderFunction);
 	}
 
+	public static <T> void registerHolder(double priority, Class<T> clazz, Function<Object, EnergyStorage> holderFunction) {
+		registerHolder(priority, object -> object.getClass() == clazz, holderFunction);
+	}
+
 	public static void registerHolder(Predicate<Object> supports, Function<Object, EnergyStorage> holderFunction) {
+		if (supports instanceof EnergyHolderPredicate) {
+			registerHolder((EnergyHolderPredicate) supports, holderFunction);
+		} else {
+			registerHolder(supports::test, holderFunction);
+		}
+	}
+
+	public static void registerHolder(double priority, Predicate<Object> supports, Function<Object, EnergyStorage> holderFunction) {
+		registerHolder(EnergyHolderPredicate.of(priority, supports), holderFunction);
+	}
+
+	public static void registerHolder(EnergyHolderPredicate supports, Function<Object, EnergyStorage> holderFunction) {
 		holderRegistry.put(supports, holderFunction);
 	}
 

@@ -3,17 +3,13 @@ package team.reborn.energy.minecraft;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import team.reborn.energy.Energy;
-import team.reborn.energy.EnergyHolder;
-import team.reborn.energy.EnergySide;
-import team.reborn.energy.EnergyStorage;
-import team.reborn.energy.EnergyTier;
+import team.reborn.energy.*;
 
 public class EnergyModInitializer implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		Energy.registerHolder(object -> {
-			if(object instanceof ItemStack){
+		Energy.registerHolder(-10, object -> {
+			if (object instanceof ItemStack) {
 				return !((ItemStack) object).isEmpty() && ((ItemStack) object).getItem() instanceof EnergyHolder;
 			}
 			return false;
