@@ -8,13 +8,9 @@ import team.reborn.energy.*;
 public class EnergyModInitializer implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		Energy.registerHolder(-10, object -> {
-			if (object instanceof ItemStack) {
-				return !((ItemStack) object).isEmpty() && ((ItemStack) object).getItem() instanceof EnergyHolder;
-			}
-			return false;
-		}, object -> {
-			final ItemStack stack = (ItemStack) object;
+		Energy.registerHolder(ItemStack.class, -10, stack -> {
+			return !stack.isEmpty() && stack.getItem() instanceof EnergyHolder;
+		}, stack -> {
 			final EnergyHolder energyHolder = (EnergyHolder) stack.getItem();
 			return new EnergyStorage() {
 				@Override

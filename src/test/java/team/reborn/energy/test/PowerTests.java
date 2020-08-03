@@ -404,29 +404,33 @@ public class PowerTests {
 		assertEquals(50, Energy.of(specialHolder).getEnergy(), 0);
 		assertEquals(1000, Energy.of(specialHolder).getMaxStored(), 0);
 
-		Energy.registerHolder(o -> o instanceof SpecialHolder, o -> {
-			final SpecialHolder holder = (SpecialHolder) o;
+		Energy.registerHolder(SpecialHolder.class, 0, holder -> {
 			return new SpecialHolderResizer(100, holder);
 		});
 
 		assertEquals(5000, Energy.of(specialHolder).getEnergy(), 0);
 		assertEquals(100000, Energy.of(specialHolder).getMaxStored(), 0);
 
-		Energy.registerHolder(10, o -> o instanceof SpecialHolder, o -> {
-			final SpecialHolder holder = (SpecialHolder) o;
+		Energy.registerHolder(SpecialHolder.class, 10, holder -> {
 			return new SpecialHolderResizer(10000, holder);
 		});
 
 		assertEquals(500000, Energy.of(specialHolder).getEnergy(), 0);
 		assertEquals(10000000, Energy.of(specialHolder).getMaxStored(), 0);
 
-		Energy.registerHolder(-7, o -> o instanceof SpecialHolder, o -> {
-			final SpecialHolder holder = (SpecialHolder) o;
+		Energy.registerHolder(SpecialHolder.class, -7, holder -> {
 			return new SpecialHolderResizer(2, holder);
 		});
 
 		assertEquals(500000, Energy.of(specialHolder).getEnergy(), 0);
 		assertEquals(10000000, Energy.of(specialHolder).getMaxStored(), 0);
+
+		Energy.registerHolder(SpecialHolder.class, 10, holder -> {
+			return new SpecialHolderResizer(0, holder);
+		});
+
+		assertEquals(0, Energy.of(specialHolder).getEnergy(), 0);
+		assertEquals(0, Energy.of(specialHolder).getMaxStored(), 0);
 	}
 
 	@Test
