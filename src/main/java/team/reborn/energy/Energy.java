@@ -1,6 +1,7 @@
 package team.reborn.energy;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -24,15 +25,10 @@ public final class Energy {
 	 * @return an EnergyHandler instance
 	 */
 	public static EnergyHandler of(Object object) {
-		EnergyStorage energyStorage = holderRegistry.entrySet().stream()
-			.filter(entry -> entry.getKey().test(object))
-			.findFirst()
-			.orElseGet(() -> {
-				throw new UnsupportedOperationException(String.format("object type (%s) not supported", object.getClass().getName()));
-			})
-			.getValue()
-			.apply(object);
-		return new EnergyHandler(energyStorage);
+		for (Map.Entry<Predicate<Object>, Function<Object, EnergyStorage>> holder : holderRegistry.entrySet()) {
+			if (holder.getKey().test(object)) return new EnergyHandler(holder.getValue().apply(object));
+		}
+		throw new UnsupportedOperationException(String.format("object type (%s) not supported", object.getClass().getName()));
 	}
 
 	/**
@@ -43,7 +39,10 @@ public final class Energy {
 	 * @return turns true if the supplied object supports energy.
 	 */
 	public static boolean valid(Object object){
-		return holderRegistry.keySet().stream().anyMatch(objectPredicate -> objectPredicate.test(object));
+		for (Predicate<Object> predicate : holderRegistry.keySet()) {
+			if (predicate.test(object)) return true;
+		}
+		return false;
 	}
 
 	public static <T> void registerHolder(Class<T> clazz, Function<Object, EnergyStorage> holderFunction) {
