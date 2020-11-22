@@ -1,13 +1,14 @@
 package team.reborn.energy;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class Energy {
 
-	private static final HashMap<Predicate<Object>, Function<Object, EnergyStorage>> holderRegistry = new HashMap<>();
+	private static final HashMap<Predicate<Object>, Function<Object, EnergyStorage>> holderRegistry = new LinkedHashMap<>();
 
 	static {
 		registerHolder(object -> object instanceof EnergyStorage, object -> (EnergyStorage) object);
@@ -25,10 +26,32 @@ public final class Energy {
 	 * @return an EnergyHandler instance
 	 */
 	public static EnergyHandler of(Object object) {
+		EnergyHandler holder = ofNullable(object);
+		if (holder != null) return holder;
+
+		throw new UnsupportedOperationException(String.format("object type (%s) not supported", object.getClass().getName()));
+	}
+
+	/**
+	 *
+	 * Used to get an EnergyHandler from an object
+	 *
+	 * EnergyStorage is supported by default. other projects may add game specific holders
+	 *
+	 * If no compatible holder is found null is returned
+	 *
+	 * @param object The input object, there must be a supported holder for the object
+	 * @return an EnergyHandler instance or null
+	 */
+	@Nullable
+	public static EnergyHandler ofNullable(Object object) {
+		if (object == null) return null;
+
 		for (Map.Entry<Predicate<Object>, Function<Object, EnergyStorage>> holder : holderRegistry.entrySet()) {
 			if (holder.getKey().test(object)) return new EnergyHandler(holder.getValue().apply(object));
 		}
-		throw new UnsupportedOperationException(String.format("object type (%s) not supported", object.getClass().getName()));
+
+		return null;
 	}
 
 	/**

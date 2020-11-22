@@ -7,7 +7,7 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath "net.fabricmc:fabric-loom:0.2.7-SNAPSHOT"
+		classpath "net.fabricmc:fabric-loom:0.5-SNAPSHOT"
 	}
 }
 
@@ -15,6 +15,7 @@ plugins {
 	id 'java'
 	id 'maven-publish'
 	id 'jacoco'
+	id "me.champeau.gradle.jmh" version "0.5.2"
 }
 
 apply plugin: net.fabricmc.loom.LoomGradlePlugin
@@ -42,10 +43,10 @@ repositories {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.15.2"
-	mappings "net.fabricmc:yarn:1.15.2+build.2:v2"
+	minecraft "com.mojang:minecraft:1.16.4"
+	mappings "net.fabricmc:yarn:1.16.4+build.7:v2"
 
-	modImplementation  "net.fabricmc:fabric-loader:0.7.5+build.178"
+	modImplementation  "net.fabricmc:fabric-loader:0.10.8"
 
 	testCompile 'junit:junit:4.12'
 }
@@ -78,6 +79,12 @@ task sourcesJar(type: Jar) {
 
 javadoc {
 	source = sourceSets.main.allJava
+}
+
+jmh {
+	duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE
+	iterations = 5
+	fork = 2
 }
 
 build.dependsOn jacocoTestReport

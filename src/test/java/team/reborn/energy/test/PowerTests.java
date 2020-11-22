@@ -6,9 +6,7 @@ import team.reborn.energy.test.minecraft.Item;
 import team.reborn.energy.test.minecraft.ItemStack;
 import team.reborn.energy.test.minecraft.PoweredItem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PowerTests {
 
@@ -248,12 +246,19 @@ public class PowerTests {
 
 		DummyClass dummy = new DummyClass();
 		assertEquals(100, Energy.of(dummy).getEnergy(), 0);
+		assertEquals(100, Energy.ofNullable(dummy).getEnergy(), 0);
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void testNoHolder(){
 		//This crashes as there is no registered holder for this class
 		Energy.of(this);
+	}
+
+	@Test
+	public void testNoHolderNullable(){
+		//This should always be null
+		assertNull(Energy.ofNullable(this));
 	}
 
 	@Test
