@@ -2,6 +2,10 @@ package team.reborn.energy;
 
 import java.util.function.BooleanSupplier;
 
+/**
+ * @deprecated Use the new energy API instead. (Under the team/reborn/energy/api package).
+ */
+@Deprecated(forRemoval = true)
 public final class EnergyMovement {
 
 	private final EnergyHandler source;

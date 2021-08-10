@@ -1,27 +1,13 @@
-buildscript {
-	repositories {
-		mavenCentral()
-		maven {
-			name = "Fabric"
-			url = "https://maven.fabricmc.net/"
-		}
-	}
-	dependencies {
-		classpath "net.fabricmc:fabric-loom:0.5-SNAPSHOT"
-	}
-}
-
 plugins {
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 	id 'java'
 	id 'maven-publish'
 	id 'jacoco'
 	id "me.champeau.gradle.jmh" version "0.5.2"
 }
 
-apply plugin: net.fabricmc.loom.LoomGradlePlugin
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = "energy"
 group = "teamreborn"
@@ -40,41 +26,60 @@ logger.lifecycle("Building Energy: " + version)
 
 repositories {
 	mavenCentral()
+	maven {
+		name = "Technici4n"
+		url = "https://raw.githubusercontent.com/Technici4n/Technici4n-maven/master/"
+		content {
+			includeGroup "net.fabricmc.fabric-api"
+		}
+	}
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16.4"
-	mappings "net.fabricmc:yarn:1.16.4+build.7:v2"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
 
 	modImplementation  "net.fabricmc:fabric-loader:0.10.8"
 
-	testCompile 'junit:junit:4.12'
+	// Temporary WIP fabric api fork
+	include modApi("net.fabricmc.fabric-api:fabric-api-lookup-api-v1:1.3.0+b246072f13")
+	include modApi("net.fabricmc.fabric-api:fabric-transfer-api-v1:1.1.0-pre.06+c35ca56f18")
+	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	testCompileOnly 'junit:junit:4.12'
+}
+
+sourceSets {
+	test {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+	jmh {
+		compileClasspath += sourceSets.test.output
+		runtimeClasspath += sourceSets.test.output
+	}
 }
 
 processResources {
-	inputs.property "version", project.version.toString()
+	inputs.property "version", project.version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": project.version.toString()
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
 	}
 }
 
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release =16
 }
 
 jar {
 	from "LICENSE"
 }
 
-task sourcesJar(type: Jar) {
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
 	from sourceSets.main.allSource
-	archiveClassifier = 'sources'
 }
 
 javadoc {

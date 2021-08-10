@@ -2,6 +2,10 @@ package team.reborn.energy;
 
 import net.minecraft.util.math.Direction;
 
+/**
+ * @deprecated Use the new energy API instead. (Under the team/reborn/energy/api package).
+ */
+@Deprecated(forRemoval = true)
 public final class EnergyHandler {
 
 	private final EnergyStorage holder;

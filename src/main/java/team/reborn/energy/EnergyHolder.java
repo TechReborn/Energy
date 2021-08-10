@@ -1,5 +1,9 @@
 package team.reborn.energy;
 
+/**
+ * @deprecated Use the new energy API instead. (Under the team/reborn/energy/api package).
+ */
+@Deprecated(forRemoval = true)
 public interface EnergyHolder {
 
 	/**
