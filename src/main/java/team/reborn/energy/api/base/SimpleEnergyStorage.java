@@ -5,6 +5,10 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import team.reborn.energy.api.EnergyStorage;
 
+/**
+ * A base energy storage implementation with fixed capacity, and per-operation insertion and extraction limits.
+ * Make sure to override {@link #onFinalCommit} to call {@code markDirty} and similar functions.
+ */
 @SuppressWarnings({"unused", "deprecation", "UnstableApiUsage"})
 public class SimpleEnergyStorage extends SnapshotParticipant<Long> implements EnergyStorage {
 	public long amount = 0;

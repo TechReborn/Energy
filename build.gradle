@@ -3,7 +3,6 @@ plugins {
 	id 'java'
 	id 'maven-publish'
 	id 'jacoco'
-	id "me.champeau.gradle.jmh" version "0.5.2"
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -35,6 +34,15 @@ repositories {
 	}
 }
 
+sourceSets {
+	testmod {
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
@@ -46,18 +54,7 @@ dependencies {
 	include modApi("net.fabricmc.fabric-api:fabric-transfer-api-v1:1.1.0-pre.06+c35ca56f18")
 	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	testCompileOnly 'junit:junit:4.12'
-}
-
-sourceSets {
-	test {
-		compileClasspath += sourceSets.main.output
-		runtimeClasspath += sourceSets.main.output
-	}
-	jmh {
-		compileClasspath += sourceSets.test.output
-		runtimeClasspath += sourceSets.test.output
-	}
+	testmodImplementation 'junit:junit:4.12'
 }
 
 processResources {
@@ -70,7 +67,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release =16
+	it.options.release = 16
 }
 
 jar {
@@ -86,16 +83,20 @@ javadoc {
 	source = sourceSets.main.allJava
 }
 
-jmh {
-	duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE
-	iterations = 5
-	fork = 2
-}
-
 build.dependsOn jacocoTestReport
-build.dependsOn test
 build.dependsOn javadoc
 build.dependsOn sourcesJar
+
+loom {
+	runs {
+		testmodClient {
+			client()
+			ideConfigGenerated project.rootProject == project
+			name = "Testmod Client"
+			source sourceSets.testmod
+		}
+	}
+}
 
 publishing {
 	publications {

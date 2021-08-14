@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "team_reborn_energy_testmod",
+  "version": "1.0.0",
+  "name": "Energy testmod",
+  "description": "The testmod of the Energy API created and used by Team Reborn",
+  "authors": [
+    "Team Reborn",
+    "modmuss50"
+  ],
+  "contact": {
+    "homepage": "https://github.com/TechReborn/Energy",
+    "sources": "https://github.com/TechReborn/Energy",
+    "issues": "https://github.com/TechReborn/Energy/issues"
+  },
+  "license": "WTFPL",
+  "environment": "*",
+  "icon": "assets/team_reborn_energy/icon.png",
+  "depends": {
+    "java": ">=16",
+    "minecraft": ">=1.17",
+    "fabric": ">=0.37.0"
+  },
+  "custom": {
+    "modmenu:api": true
+  },
+  "entrypoints": {
+    "main": [
+      "team.reborn.energy.test.EnergyTests"
+    ]
+  }
+}

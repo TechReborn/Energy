@@ -7,6 +7,9 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import team.reborn.energy.api.base.SimpleEnergyStorage;
+import team.reborn.energy.api.base.SimpleItemEnergyStorage;
+import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
 
 /**
  * An object that can store energy.
@@ -31,6 +34,8 @@ public interface EnergyStorage {
 	 * The {@code Direction} parameter may never be null.
 	 * Refer to {@link BlockApiLookup} for documentation on how to use this field.
 	 *
+	 * <p>{@link SimpleEnergyStorage} and {@link SimpleSidedEnergyContainer} are provided as base implementations.
+	 *
 	 * <p>When the operations supported by an energy storage change,
 	 * that is if the return value of {@link EnergyStorage#supportsInsertion} or {@link EnergyStorage#supportsExtraction} changes,
 	 * the storage should notify its neighbors with a block update so that they can refresh their connections if necessary.
@@ -43,6 +48,10 @@ public interface EnergyStorage {
 	/**
 	 * Item access to energy storages.
 	 * Querying should always happen through {@link ContainerItemContext#find}.
+	 *
+	 * <p>{@link SimpleItemEnergyStorage} is provided as base implementation.
+	 * Custom implementations should treat the context as a wrapper around a single slot,
+	 * and always check the current item variant and amount before any operation, like {@code SimpleItemEnergyStorage} does it.
 	 *
 	 * <p>This may be queried both client-side and server-side.
 	 * Returned APIs should behave the same regardless of the logical side.
