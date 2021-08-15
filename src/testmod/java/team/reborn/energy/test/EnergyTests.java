@@ -3,26 +3,16 @@ package team.reborn.energy.test;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.minecraft.Bootstrap;
-import net.minecraft.MinecraftVersion;
-import net.minecraft.SharedConstants;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
+import org.mockito.Mockito;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleItemEnergyStorage;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static team.reborn.energy.api.base.SimpleItemEnergyStorage.ENERGY_KEY;
@@ -73,7 +63,8 @@ public class EnergyTests implements ModInitializer {
 				return 2;
 			}
 		};
-		ContainerItemContext ctx = new SingleSlotContainerItemContext(slot);
+		World worldMock = Mockito.mock(World.class);
+		ContainerItemContext ctx = ContainerItemContext.ofSingleSlot(worldMock, slot);
 
 		// Set starting items (diamonds here)
 		slot.variant = ItemVariant.of(Items.DIAMOND);
@@ -106,35 +97,6 @@ public class EnergyTests implements ModInitializer {
 			assertEquals(0, energyStorage.extract(Long.MAX_VALUE, transaction));
 			assertEquals(0, energyStorage.getAmount());
 			assertEquals(0, energyStorage.getCapacity());
-		}
-	}
-
-	// TODO: add to fabric API?
-	private static class SingleSlotContainerItemContext implements ContainerItemContext {
-		private final SingleSlotStorage<ItemVariant> slot;
-
-		private SingleSlotContainerItemContext(SingleSlotStorage<ItemVariant> slot) {
-			this.slot = slot;
-		}
-
-		@Override
-		public SingleSlotStorage<ItemVariant> getMainSlot() {
-			return slot;
-		}
-
-		@Override
-		public long insertOverflow(ItemVariant itemVariant, long maxAmount, TransactionContext transactionContext) {
-			return 0;
-		}
-
-		@Override
-		public List<SingleSlotStorage<ItemVariant>> getAdditionalSlots() {
-			return Collections.emptyList();
-		}
-
-		@Override
-		public World getWorld() {
-			return null; // bad impl, but we don't use this in the test.
 		}
 	}
 }

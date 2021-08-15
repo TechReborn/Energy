@@ -51,10 +51,11 @@ dependencies {
 
 	// Temporary WIP fabric api fork
 	include modApi("net.fabricmc.fabric-api:fabric-api-lookup-api-v1:1.3.0+b246072f13")
-	include modApi("net.fabricmc.fabric-api:fabric-transfer-api-v1:1.1.0-pre.06+c35ca56f18")
+	include modApi("net.fabricmc.fabric-api:fabric-transfer-api-v1:1.1.0-pre.07+5ba6d1d318")
 	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	testmodImplementation 'junit:junit:4.12'
+	testmodImplementation 'org.mockito:mockito-core:3.+'
 }
 
 processResources {

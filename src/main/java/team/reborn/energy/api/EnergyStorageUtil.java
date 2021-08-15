@@ -28,11 +28,11 @@ public class EnergyStorageUtil {
 		// Simulate extraction first.
 		long maxExtracted;
 
-		try (Transaction extractionTestTransaction = openTransaction(transaction)) {
+		try (Transaction extractionTestTransaction = Transaction.openNested(transaction)) {
 			maxExtracted = from.extract(maxAmount, extractionTestTransaction);
 		}
 
-		try (Transaction moveTransaction = openTransaction(transaction)) {
+		try (Transaction moveTransaction = Transaction.openNested(transaction)) {
 			// Then insert what can be extracted.
 			long accepted = to.insert(maxExtracted, moveTransaction);
 
@@ -45,11 +45,6 @@ public class EnergyStorageUtil {
 		}
 
 		return 0;
-	}
-
-	// TODO: should perhaps be added in the transfer api? Transaction.openNested(@Nullable TransactionContext) ?
-	private static Transaction openTransaction(@Nullable TransactionContext maybeParent) {
-		return maybeParent == null ? Transaction.openOuter() : maybeParent.openNested();
 	}
 
 	private EnergyStorageUtil() {
