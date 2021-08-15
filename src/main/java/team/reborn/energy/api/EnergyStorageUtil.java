@@ -37,7 +37,7 @@ public class EnergyStorageUtil {
 			long accepted = to.insert(maxExtracted, moveTransaction);
 
 			// Extract for real.
-			if (from.extract(accepted, transaction) == accepted) {
+			if (from.extract(accepted, moveTransaction) == accepted) {
 				// Commit if the amounts match.
 				moveTransaction.commit();
 				return accepted;

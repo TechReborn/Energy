@@ -23,7 +23,7 @@ import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
  *     nor that something can be inserted if capacity > amount.
  *     If you want to know, you can simulate the operation with {@link #insert} and {@link #extract}.
  *     </li>
- * </ul></p>
+ * </ul>
  *
  * @see Transaction
  */
