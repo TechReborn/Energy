@@ -1,13 +1,10 @@
 # Energy
 
-An Energy API used by TechReborn
+An Energy API for Fabric mods, originally written for TechReborn.
 
-* Fully unit tested
-* Depends on Minecraft and fabric-loader
+Uses Fabric's API Lookup and Transaction systems.
 
 Currently WIP, the API may change at any time! I am very open to feedback and suggestions on the issue tracker.
-
-This may seem quite different from any energy API that you have seen before (code wise), as this is because I wanted to try something different.
 
 # Reference Values
 
@@ -21,102 +18,99 @@ This may seem quite different from any energy API that you have seen before (cod
 Add the following into your dependencies block in build.gradle
 
 ```groovy
-modApi 'teamreborn:energy:<latest_version>'
-include 'teamreborn:energy:<latest_version>'
+include modApi('teamreborn:energy:<latest_version>')
 ```
 
-## Basic Example
+# Documentation
+The API revolves around [`EnergyStorage`](src/main/java/team/reborn/energy/api/EnergyStorage.java).
+Make sure to check out the documentation.
 
-This basic example shows how to move energy from place to another, the source or target can be anything that has a registered holder.
+A few examples follow to get you started.
 
-```java
-Energy.of(source)
-	.side(side)
-	.into(
-	   Energy.of(target).side(side.getOpposite())
-	)
-	.move();
+## Implementing energy-containing blocks
+The easiest way, with fixed capacity and insertion/extraction limits:
+```groovy
+public class MyBlockEntity extends BlockEntity {
+    // Store a SimpleEnergyStorage in the block entity class.
+    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(CAPACITY, MAX_INSERT, MAX_EXTRACT) {
+        @Override
+        protected void onFinalCommit() {
+            markDirty();
+        }
+    };
+    
+    // Use the energy internally, for example in tick()
+    public void tick() {
+        if (!world.isClient && energyStorage.amount >= 10) {
+            energyStorage.amount -= 10;
+            // do something with the 10 energy we just used.
+            markDirty();
+        }
+    }
+    
+    // Don't forget to save/read the energy in the block entity NBT.
+}
+
+// Don't forget to register the energy storage. Make sure to call this after you create the block entity type.
+BlockEntityType<MyBlockEntity> MY_BLOCK_ENTITY;
+EnergyStorage.SIDED.registerForBlockEntity((myBlockEntity, direction) -> myBlockEntity.energyStorage, MY_BLOCK_ENTITY);
 ```
 
-# Full documentation
+`SimpleSidedEnergyContainer` may be used if the I/O limits are side-dependent.
 
-WIP will be done at some point
+If you know what you are doing, you can also implement `EnergyStorage` directly, but in most cases that's not necessary.
+Refer to the documentation of this API, of the Transaction API and API Lookup for details.
 
-## Energy
+## Usage example (blocks)
+Get an energy storage:
+```groovy
+@Nullable
+EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, pos, direction);
+```
+Get an adjacent energy storage:
+```groovy
+// Known things
+World world; BlockPos currentPos; Direction adjacentDirection;
+// Get adjacent energy storage, or null if there is none
+@Nullable
+EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, currentPos.offset(adjacentDirection), adjacentDirection.getOpposite());
+```
+Move energy between two storages:
+```groovy
+EnergyStorage source, target;
 
-### Energy.of
+long amountMoved = EnergyStorageUtil.move(
+        source, // from source
+        target, // into target
+        Long.MAX_VALUE, // no limit on the amount
+        null // create a new transaction for this operation 
+);
+```
+Try to extract an exact amount of energy:
+```groovy
+EnergyStorage source;
+long amountToUse;
 
-`Energy.of(object)` will return an `EnergyHandler` that can be used to read or interact with the energy of a supplied object (More on this later).
-
-The Object may be an instance of `EnergyStorage` or any other object that has a supported holder registered (More on this later). 
-
-RebornCore (Included in TechReborn) registers a holder for Minecraft's `ItemStack`, allow you easily get the energy off an `ItemStack`. BlockEntities are expected to implement `EnergyStorage`
-
-### Energy.valid
-
-`Energy.valid` will return true if the given object is supported
-
-## EnergyHandler
-
-An instance of EnergyHandler can be got from `Energy.of()`
-
-### getEnergy
-
-Returns the current amount of stored energy
-
-```java
-double energy = Energy.of(object).getEnergy()
+// Open a transaction: this allows cancelling the operation if it doesn't go as expected.
+try (Transaction transaction = Transaction.openOuter()) {
+    // Try to extract, will return how much was actually extracted
+    long amountExtracted = source.extract(amountToUse, transaction);
+    if (amountExtracted == amountToUse) {
+        // "Commit" the transaction to make sure the change is applied.
+        transaction.commit();
+    } else {
+        // Doing nothing "aborts" the transaction, cancelling the change.
+    }
+}
 ```
 
-### getMaxStored
+## Creating chargeable items
+The easiest way to create an item that can be charged by supported mods is by implementing `SimpleBatteryItem` on your item class.
+The functions should be self-explanatory.
 
-Returns the maximum amount of energy that the holder can store
+For more complex items, `EnergyStorage.ITEM` may be used directly.
+Make sure you read the documentation of `ContainerItemContext` if you go down that path.
 
-```java
-double energy = Energy.of(object).getEnergy()
-```
-
-### set
-
-Set the amount of energy stored in the holder
-
-```java
-Energy.of(object).set(250)
-```
-
-### extract
-
-Extract upto the amount of energy provided, returns the amount of energy that was extracted. This is limited by the max output of the holder, as well as the amount of energy that is held in the holder. Returns the the amount of energy actually extracted from the holder.
-
-```java
-double extracted = Energy.of(object).extract(20)
-```
-
-### insert
-
-Insert upto the amount of energy provided, returns the amount of energy that was inserted. This is limited by the max input of the holder, as well as the amount of free space in the hold. Returns the the amount of energy actually inserted from the holder.
-
-
-```java
-double inserted = Energy.of(object).insert(20)
-```
-
-### getMaxInput
-
-### getMaxOutput
-
-### simulate
-
-### side
-
-### into
-
-### use(amount)
-
-## EnergyMovement
-
-### move
-
-### move(amount)
-
-### onlyIf
+## Charging items
+Check out how you can create a `ContainerItemContext`,
+and use it to query an `EnergyStorage` implementation with `EnergyStorage.SIDED`.
