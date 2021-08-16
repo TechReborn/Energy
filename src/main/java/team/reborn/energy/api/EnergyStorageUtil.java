@@ -1,8 +1,13 @@
 package team.reborn.energy.api;
 
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,6 +50,35 @@ public class EnergyStorageUtil {
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Return true if the passed stack offers an energy storage through {@link EnergyStorage#ITEM}.
+	 * This can typically be used for inventories or slots that want to accept energy storages only.
+	 */
+	public static boolean isEnergyStorage(ItemStack stack) {
+		SingleSlotStorage<ItemVariant> testSlot = new SingleStackStorage() {
+			@Override
+			protected ItemStack getStack() {
+				return stack;
+			}
+
+			@Override
+			protected void setStack(ItemStack stack) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			protected boolean canInsert(ItemVariant itemVariant) {
+				return false;
+			}
+
+			@Override
+			protected boolean canExtract(ItemVariant itemVariant) {
+				return false;
+			}
+		};
+		return ContainerItemContext.ofSingleSlot(testSlot).find(EnergyStorage.ITEM) != null;
 	}
 
 	private EnergyStorageUtil() {
