@@ -9,7 +9,6 @@ import net.minecraft.item.Items;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mockito.Mockito;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleItemEnergyStorage;
@@ -63,8 +62,7 @@ public class EnergyTests implements ModInitializer {
 				return 2;
 			}
 		};
-		World worldMock = Mockito.mock(World.class);
-		ContainerItemContext ctx = ContainerItemContext.ofSingleSlot(worldMock, slot);
+		ContainerItemContext ctx = ContainerItemContext.ofSingleSlot(slot);
 
 		// Set starting items (diamonds here)
 		slot.variant = ItemVariant.of(Items.DIAMOND);
