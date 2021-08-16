@@ -11,7 +11,7 @@ import team.reborn.energy.api.EnergyStorage;
 
 /**
  * A base energy storage implementation for items, with fixed capacity, and per-operation insertion and extraction limits.
- * The energy is stored in the {@code energy} tag of the stacks.
+ * The energy is stored in the {@code energy} tag of the stacks, the same as the constant {@link SimpleBatteryItem#ENERGY_KEY}.
  *
  * <p>Stackable energy containers are supported just fine, and they will distribute energy evenly.
  * For example, insertion of 3 units of energy into a stack of 2 items using this class will either insert 0 or 2 depending on the remaining capacity.
