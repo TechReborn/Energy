@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import team.reborn.energy.api.EnergyStorage;
 
 /**
@@ -19,8 +18,6 @@ import team.reborn.energy.api.EnergyStorage;
  */
 @SuppressWarnings({"unused", "deprecation", "UnstableApiUsage"})
 public final class SimpleItemEnergyStorage implements EnergyStorage {
-	public static final String ENERGY_KEY = "energy";
-
 	private final ContainerItemContext ctx;
 	private final Item startingItem;
 	private final long capacity;
@@ -50,14 +47,7 @@ public final class SimpleItemEnergyStorage implements EnergyStorage {
 	 */
 	private boolean trySetEnergy(long energyAmountPerCount, long count, TransactionContext transaction) {
 		ItemStack newStack = ctx.getItemVariant().toStack();
-
-		if (energyAmountPerCount == 0) {
-			// Make sure newly crafted energy containers stack with emptied ones.
-			newStack.removeSubTag(ENERGY_KEY);
-		} else {
-			newStack.getOrCreateTag().putLong(ENERGY_KEY, energyAmountPerCount);
-		}
-
+		SimpleBatteryItem.setStoredEnergyUnchecked(newStack, energyAmountPerCount);
 		ItemVariant newVariant = ItemVariant.of(newStack);
 
 		// Try to convert exactly `count` items.
@@ -128,8 +118,7 @@ public final class SimpleItemEnergyStorage implements EnergyStorage {
 	@Override
 	public long getAmount() {
 		if (hasStartingItem()) {
-			NbtCompound nbt = ctx.getItemVariant().getNbt();
-			return nbt == null ? 0 : nbt.getLong(ENERGY_KEY) * ctx.getAmount();
+			return ctx.getAmount() * SimpleBatteryItem.getStoredEnergyUnchecked(ctx.getItemVariant().getNbt());
 		} else {
 			return 0;
 		}

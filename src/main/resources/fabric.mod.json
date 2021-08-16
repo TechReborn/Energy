@@ -21,6 +21,7 @@
   },
   "entrypoints": {
     "main": [
+      "team.reborn.energy.impl.EnergyInitializer",
       "team.reborn.energy.minecraft.EnergyModInitializer"
     ]
   }

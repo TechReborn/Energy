@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.item.Items;
-import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import team.reborn.energy.api.EnergyStorage;
@@ -14,7 +13,7 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleItemEnergyStorage;
 
 import static org.junit.Assert.*;
-import static team.reborn.energy.api.base.SimpleItemEnergyStorage.ENERGY_KEY;
+import static team.reborn.energy.api.base.SimpleBatteryItem.ENERGY_KEY;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"})
 public class EnergyTests implements ModInitializer {
