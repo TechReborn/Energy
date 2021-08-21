@@ -5,12 +5,15 @@ import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.EnergyStorageUtil;
+import team.reborn.energy.api.base.SimpleBatteryItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
-import team.reborn.energy.api.base.SimpleItemEnergyStorage;
 
 import static org.junit.Assert.*;
 import static team.reborn.energy.api.base.SimpleBatteryItem.ENERGY_KEY;
@@ -21,9 +24,17 @@ public class EnergyTests implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		testEmptyStorage();
 		testSimpleEnergyStorage();
 		testItemEnergyStorage();
+		testBatteryItem();
 		LOGGER.info("TR Energy tests successful!");
+	}
+
+	public void testEmptyStorage() {
+		try (Transaction transaction = Transaction.openOuter()) {
+			ensureEmpty(EnergyStorage.EMPTY, transaction);
+		}
 	}
 
 	public void testSimpleEnergyStorage() {
@@ -68,7 +79,7 @@ public class EnergyTests implements ModInitializer {
 		slot.amount = 2;
 
 		// Create the energy storage
-		EnergyStorage energyStorage = new SimpleItemEnergyStorage(ctx, 60, 50, 30);
+		EnergyStorage energyStorage = SimpleBatteryItem.createStorage(ctx, 60, 50, 30);
 
 		try (Transaction transaction = Transaction.openOuter()) {
 			assertTrue(energyStorage.supportsInsertion());
@@ -88,12 +99,27 @@ public class EnergyTests implements ModInitializer {
 
 			// Now check that everything returns 0 if we change the item in the slot.
 			slot.variant = ItemVariant.blank();
-			assertFalse(energyStorage.supportsInsertion());
-			assertFalse(energyStorage.supportsExtraction());
-			assertEquals(0, energyStorage.insert(Long.MAX_VALUE, transaction));
-			assertEquals(0, energyStorage.extract(Long.MAX_VALUE, transaction));
-			assertEquals(0, energyStorage.getAmount());
-			assertEquals(0, energyStorage.getCapacity());
+			ensureEmpty(energyStorage, transaction);
 		}
+	}
+
+	private static void ensureEmpty(EnergyStorage energyStorage, TransactionContext transaction) {
+		assertFalse(energyStorage.supportsInsertion());
+		assertFalse(energyStorage.supportsExtraction());
+		assertEquals(0, energyStorage.insert(Long.MAX_VALUE, transaction));
+		assertEquals(0, energyStorage.extract(Long.MAX_VALUE, transaction));
+		assertEquals(0, energyStorage.getAmount());
+		assertEquals(0, energyStorage.getCapacity());
+	}
+
+	public void testBatteryItem() {
+		TestBatteryItem item = new TestBatteryItem(60, 50, 50);
+		ItemStack stack = new ItemStack(item);
+
+		assertEquals(0, item.getStoredEnergy(stack));
+		assertTrue(EnergyStorageUtil.isEnergyStorage(stack));
+
+		item.setStoredEnergy(stack, 10);
+		assertEquals(10, item.getStoredEnergy(stack));
 	}
 }

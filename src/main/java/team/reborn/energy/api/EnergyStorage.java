@@ -7,9 +7,12 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import team.reborn.energy.api.base.DelegatingEnergyStorage;
+import team.reborn.energy.api.base.SimpleBatteryItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
-import team.reborn.energy.api.base.SimpleItemEnergyStorage;
 import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
+import team.reborn.energy.impl.EnergyImpl;
+import team.reborn.energy.impl.SimpleItemEnergyStorageImpl;
 
 /**
  * An object that can store energy.
@@ -49,15 +52,22 @@ public interface EnergyStorage {
 	 * Item access to energy storages.
 	 * Querying should always happen through {@link ContainerItemContext#find}.
 	 *
-	 * <p>{@link SimpleItemEnergyStorage} is provided as base implementation.
+	 * <p>{@link SimpleItemEnergyStorageImpl} is provided as an implementation example.
+	 * Instances of it can be optained through {@link SimpleBatteryItem#createStorage}.
 	 * Custom implementations should treat the context as a wrapper around a single slot,
-	 * and always check the current item variant and amount before any operation, like {@code SimpleItemEnergyStorage} does it.
+	 * and always check the current item variant and amount before any operation, like {@code SimpleItemEnergyStorageImpl} does it.
+	 * The check can be handled by {@link DelegatingEnergyStorage}.
 	 *
 	 * <p>This may be queried both client-side and server-side.
 	 * Returned APIs should behave the same regardless of the logical side.
 	 */
 	ItemApiLookup<EnergyStorage, ContainerItemContext> ITEM =
 			ItemApiLookup.get(new Identifier("teamreborn:energy"), EnergyStorage.class, ContainerItemContext.class);
+
+	/**
+	 * Always empty energy storage.
+	 */
+	EnergyStorage EMPTY = EnergyImpl.EMPTY;
 
 	/**
 	 * Return false if calling {@link #insert} will absolutely always return 0, or true otherwise or in doubt.

@@ -1,9 +1,11 @@
 package team.reborn.energy.api.base;
 
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.impl.SimpleItemEnergyStorageImpl;
 
 /**
  * Simple battery-like item. If this is implemented on an item:
@@ -16,6 +18,18 @@ import team.reborn.energy.api.EnergyStorage;
 // TODO: Consider adding a tooltip and a recipe input -> output energy transfer handler like RC has.
 public interface SimpleBatteryItem {
 	String ENERGY_KEY = "energy";
+
+	/**
+	 * Return a base energy storage implementation for items, with fixed capacity, and per-operation insertion and extraction limits.
+	 * This is used internally for items that implement SimpleBatteryItem, but it may also be used outside of that.
+	 * The energy is stored in the {@code energy} tag of the stacks, the same as the constant {@link #ENERGY_KEY}.
+	 *
+	 * <p>Stackable energy containers are supported just fine, and they will distribute energy evenly.
+	 * For example, insertion of 3 units of energy into a stack of 2 items using this class will either insert 0 or 2 depending on the remaining capacity.
+	 */
+	static EnergyStorage createStorage(ContainerItemContext ctx, long capacity, long maxInsert, long maxExtract) {
+		return SimpleItemEnergyStorageImpl.createSimpleStorage(ctx, capacity, maxInsert, maxExtract);
+	}
 
 	/**
 	 * @return The max energy that can be stored in this item.

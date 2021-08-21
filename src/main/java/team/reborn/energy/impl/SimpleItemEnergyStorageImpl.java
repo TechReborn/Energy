@@ -1,4 +1,4 @@
-package team.reborn.energy.api.base;
+package team.reborn.energy.impl;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -8,38 +8,37 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.base.DelegatingEnergyStorage;
+import team.reborn.energy.api.base.SimpleBatteryItem;
 
 /**
- * A base energy storage implementation for items, with fixed capacity, and per-operation insertion and extraction limits.
- * The energy is stored in the {@code energy} tag of the stacks, the same as the constant {@link SimpleBatteryItem#ENERGY_KEY}.
- *
- * <p>Stackable energy containers are supported just fine, and they will distribute energy evenly.
- * For example, insertion of 3 units of energy into a stack of 2 items using this class will either insert 0 or 2 depending on the remaining capacity.
+ * Note: instances of this class do not perform any context validation,
+ * that is handled by the DelegatingEnergyStorage they are wrapped behind.
  */
-@SuppressWarnings({"unused", "deprecation", "UnstableApiUsage"})
-public final class SimpleItemEnergyStorage implements EnergyStorage {
-	private final ContainerItemContext ctx;
-	private final Item startingItem;
-	private final long capacity;
-	private final long maxInsert, maxExtract;
-
-	public SimpleItemEnergyStorage(ContainerItemContext ctx, long capacity, long maxInsert, long maxExtract) {
+@SuppressWarnings({"deprecation", "UnstableApiUsage"})
+public class SimpleItemEnergyStorageImpl implements EnergyStorage {
+	public static EnergyStorage createSimpleStorage(ContainerItemContext ctx, long capacity, long maxInsert, long maxExtract) {
 		StoragePreconditions.notNegative(capacity);
 		StoragePreconditions.notNegative(maxInsert);
 		StoragePreconditions.notNegative(maxExtract);
 
+		Item startingItem = ctx.getItemVariant().getItem();
+
+		return new DelegatingEnergyStorage(
+				new SimpleItemEnergyStorageImpl(ctx, capacity, maxInsert, maxExtract),
+				() -> ctx.getItemVariant().isOf(startingItem) && ctx.getAmount() > 0
+		);
+	}
+
+	private final ContainerItemContext ctx;
+	private final long capacity;
+	private final long maxInsert, maxExtract;
+
+	private SimpleItemEnergyStorageImpl(ContainerItemContext ctx, long capacity, long maxInsert, long maxExtract) {
 		this.ctx = ctx;
-		this.startingItem = ctx.getItemVariant().getItem();
 		this.capacity = capacity;
 		this.maxInsert = maxInsert;
 		this.maxExtract = maxExtract;
-	}
-
-	/**
-	 * Used to check if the context still has the starting item. (If it doesn't we can't do anything).
-	 */
-	private boolean hasStartingItem() {
-		return ctx.getItemVariant().isOf(startingItem) && ctx.getAmount() > 0;
 	}
 
 	/**
@@ -63,16 +62,11 @@ public final class SimpleItemEnergyStorage implements EnergyStorage {
 
 	@Override
 	public boolean supportsInsertion() {
-		return maxInsert > 0 && hasStartingItem();
+		return maxInsert > 0;
 	}
 
 	@Override
 	public long insert(long maxAmount, TransactionContext transaction) {
-		StoragePreconditions.notNegative(maxAmount);
-
-		// Make sure the item matches.
-		if (!hasStartingItem()) return 0;
-
 		long count = ctx.getAmount();
 
 		long maxAmountPerCount = maxAmount / count;
@@ -90,16 +84,11 @@ public final class SimpleItemEnergyStorage implements EnergyStorage {
 
 	@Override
 	public boolean supportsExtraction() {
-		return maxExtract > 0 && hasStartingItem();
+		return maxExtract > 0;
 	}
 
 	@Override
 	public long extract(long maxAmount, TransactionContext transaction) {
-		StoragePreconditions.notNegative(maxAmount);
-
-		// Make sure the item matches.
-		if (!hasStartingItem()) return 0;
-
 		long count = ctx.getAmount();
 
 		long maxAmountPerCount = maxAmount / count;
@@ -117,19 +106,11 @@ public final class SimpleItemEnergyStorage implements EnergyStorage {
 
 	@Override
 	public long getAmount() {
-		if (hasStartingItem()) {
-			return ctx.getAmount() * SimpleBatteryItem.getStoredEnergyUnchecked(ctx.getItemVariant().getNbt());
-		} else {
-			return 0;
-		}
+		return ctx.getAmount() * SimpleBatteryItem.getStoredEnergyUnchecked(ctx.getItemVariant().getNbt());
 	}
 
 	@Override
 	public long getCapacity() {
-		if (hasStartingItem()) {
-			return capacity * ctx.getAmount();
-		} else {
-			return 0;
-		}
+		return ctx.getAmount() * capacity;
 	}
 }
