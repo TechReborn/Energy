@@ -7,6 +7,7 @@ import team.reborn.energy.api.EnergyStorage;
 
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * An energy storage that delegates to another energy storage,
@@ -15,7 +16,7 @@ import java.util.function.BooleanSupplier;
  */
 @SuppressWarnings({"deprecation", "UnstableApiUsage"})
 public class DelegatingEnergyStorage implements EnergyStorage {
-	protected final EnergyStorage backingStorage;
+	protected final Supplier<EnergyStorage> backingStorage;
 	protected final BooleanSupplier validPredicate;
 
 	/**
@@ -25,13 +26,21 @@ public class DelegatingEnergyStorage implements EnergyStorage {
 	 *                       {@code null} can be passed if no filtering is necessary.
 	 */
 	public DelegatingEnergyStorage(EnergyStorage backingStorage, @Nullable BooleanSupplier validPredicate) {
+		this(() -> backingStorage, validPredicate);
+		Objects.requireNonNull(backingStorage);
+	}
+
+	/**
+	 * More general constructor that allows the backing storage to change over time.
+	 */
+	public DelegatingEnergyStorage(Supplier<EnergyStorage> backingStorage, @Nullable BooleanSupplier validPredicate) {
 		this.backingStorage = Objects.requireNonNull(backingStorage);
 		this.validPredicate = validPredicate == null ? () -> true : validPredicate;
 	}
 
 	@Override
 	public boolean supportsInsertion() {
-		return validPredicate.getAsBoolean() && backingStorage.supportsInsertion();
+		return validPredicate.getAsBoolean() && backingStorage.get().supportsInsertion();
 	}
 
 	@Override
@@ -39,7 +48,7 @@ public class DelegatingEnergyStorage implements EnergyStorage {
 		StoragePreconditions.notNegative(maxAmount);
 
 		if (validPredicate.getAsBoolean()) {
-			return backingStorage.insert(maxAmount, transaction);
+			return backingStorage.get().insert(maxAmount, transaction);
 		} else {
 			return 0;
 		}
@@ -47,7 +56,7 @@ public class DelegatingEnergyStorage implements EnergyStorage {
 
 	@Override
 	public boolean supportsExtraction() {
-		return validPredicate.getAsBoolean() && backingStorage.supportsExtraction();
+		return validPredicate.getAsBoolean() && backingStorage.get().supportsExtraction();
 	}
 
 	@Override
@@ -55,7 +64,7 @@ public class DelegatingEnergyStorage implements EnergyStorage {
 		StoragePreconditions.notNegative(maxAmount);
 
 		if (validPredicate.getAsBoolean()) {
-			return backingStorage.extract(maxAmount, transaction);
+			return backingStorage.get().extract(maxAmount, transaction);
 		} else {
 			return 0;
 		}
@@ -64,7 +73,7 @@ public class DelegatingEnergyStorage implements EnergyStorage {
 	@Override
 	public long getAmount() {
 		if (validPredicate.getAsBoolean()) {
-			return backingStorage.getAmount();
+			return backingStorage.get().getAmount();
 		} else {
 			return 0;
 		}
@@ -73,7 +82,7 @@ public class DelegatingEnergyStorage implements EnergyStorage {
 	@Override
 	public long getCapacity() {
 		if (validPredicate.getAsBoolean()) {
-			return backingStorage.getCapacity();
+			return backingStorage.get().getCapacity();
 		} else {
 			return 0;
 		}
