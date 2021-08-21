@@ -17,7 +17,9 @@
   "environment": "*",
   "icon": "assets/team_reborn_energy/icon.png",
   "custom": {
-    "modmenu:api": true
+    "modmenu": {
+      "badges": [ "library" ]
+    }
   },
   "entrypoints": {
     "main": [
