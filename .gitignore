@@ -12,4 +12,6 @@
 !/gradlew.bat
 !/LICENSE
 !/README.md
-!/Jenkinsfile
+!/settings.gradle
+!/gradle.properties
+!/.github

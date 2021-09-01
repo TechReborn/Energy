@@ -1,0 +1,17 @@
+
+name: Build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    container:
+      image: openjdk:16-jdk
+      options: --user root
+    steps:
+      - uses: actions/checkout@v2
+      - uses: gradle/wrapper-validation-action@v1
+      - run: ./gradlew check build publishToMavenLocal --stacktrace --parallel --warning-mode=fail
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: build/libs/

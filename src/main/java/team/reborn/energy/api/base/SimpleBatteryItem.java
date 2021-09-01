@@ -90,7 +90,7 @@ public interface SimpleBatteryItem {
 	 * @return The currently stored energy, ignoring the count and without checking the current item.
 	 */
 	static long getStoredEnergyUnchecked(ItemStack stack) {
-		return getStoredEnergyUnchecked(stack.getTag());
+		return getStoredEnergyUnchecked(stack.getNbt());
 	}
 
 	/**
@@ -106,9 +106,9 @@ public interface SimpleBatteryItem {
 	static void setStoredEnergyUnchecked(ItemStack stack, long newAmount) {
 		if (newAmount == 0) {
 			// Make sure newly crafted energy containers stack with emptied ones.
-			stack.removeSubTag(ENERGY_KEY);
+			stack.removeSubNbt(ENERGY_KEY);
 		} else {
-			stack.getOrCreateTag().putLong(ENERGY_KEY, newAmount);
+			stack.getOrCreateNbt().putLong(ENERGY_KEY, newAmount);
 		}
 	}
 }

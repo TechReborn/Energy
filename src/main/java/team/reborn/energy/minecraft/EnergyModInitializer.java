@@ -25,13 +25,13 @@ public class EnergyModInitializer implements ModInitializer {
 				@Override
 				public double getStored(EnergySide face) {
 					validateNBT();
-					return stack.getTag().getDouble("energy");
+					return stack.getNbt().getDouble("energy");
 				}
 
 				@Override
 				public void setStored(double amount) {
 					validateNBT();
-					stack.getTag().putDouble("energy", amount);
+					stack.getNbt().putDouble("energy", amount);
 				}
 
 				@Override
@@ -45,9 +45,9 @@ public class EnergyModInitializer implements ModInitializer {
 				}
 
 				private void validateNBT() {
-					if (!stack.hasTag()) {
-						stack.setTag(new NbtCompound());
-						stack.getTag().putInt("energy", 0);
+					if (!stack.hasNbt()) {
+						stack.setNbt(new NbtCompound());
+						stack.getNbt().putInt("energy", 0);
 					}
 				}
 			};

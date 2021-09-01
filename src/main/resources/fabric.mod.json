@@ -19,10 +19,7 @@
   "depends": {
     "java": ">=16",
     "minecraft": ">=1.17",
-    "fabric": ">=0.38"
-  },
-  "custom": {
-    "modmenu:api": true
+    "fabric": ">=0.40"
   },
   "entrypoints": {
     "main": [
