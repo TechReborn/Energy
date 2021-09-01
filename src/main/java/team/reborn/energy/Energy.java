@@ -6,6 +6,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * @deprecated Use the new energy API instead. (Under the team/reborn/energy/api package).
+ */
+@Deprecated(forRemoval = true)
 public final class Energy {
 
 	private static final HashMap<Predicate<Object>, Function<Object, EnergyStorage>> holderRegistry = new LinkedHashMap<>();

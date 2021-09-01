@@ -1,27 +1,12 @@
-buildscript {
-	repositories {
-		mavenCentral()
-		maven {
-			name = "Fabric"
-			url = "https://maven.fabricmc.net/"
-		}
-	}
-	dependencies {
-		classpath "net.fabricmc:fabric-loom:0.5-SNAPSHOT"
-	}
-}
-
 plugins {
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 	id 'java'
 	id 'maven-publish'
 	id 'jacoco'
-	id "me.champeau.gradle.jmh" version "0.5.2"
 }
 
-apply plugin: net.fabricmc.loom.LoomGradlePlugin
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = "energy"
 group = "teamreborn"
@@ -38,59 +23,67 @@ def getVersionName = { ->
 version = getVersionName()
 logger.lifecycle("Building Energy: " + version)
 
-repositories {
-	mavenCentral()
+sourceSets {
+	testmod {
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16.4"
-	mappings "net.fabricmc:yarn:1.16.4+build.7:v2"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
 
 	modImplementation  "net.fabricmc:fabric-loader:0.10.8"
 
-	testCompile 'junit:junit:4.12'
+	// Temporary WIP fabric api fork
+	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	testmodImplementation 'junit:junit:4.12'
 }
 
 processResources {
-	inputs.property "version", project.version.toString()
+	inputs.property "version", project.version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": project.version.toString()
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
 	}
 }
 
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release = 16
 }
 
 jar {
 	from "LICENSE"
 }
 
-task sourcesJar(type: Jar) {
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
 	from sourceSets.main.allSource
-	archiveClassifier = 'sources'
 }
 
 javadoc {
 	source = sourceSets.main.allJava
 }
 
-jmh {
-	duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE
-	iterations = 5
-	fork = 2
-}
-
 build.dependsOn jacocoTestReport
-build.dependsOn test
 build.dependsOn javadoc
 build.dependsOn sourcesJar
+
+loom {
+	runs {
+		testmodClient {
+			client()
+			ideConfigGenerated project.rootProject == project
+			name = "Testmod Client"
+			source sourceSets.testmod
+		}
+	}
+}
 
 publishing {
 	publications {

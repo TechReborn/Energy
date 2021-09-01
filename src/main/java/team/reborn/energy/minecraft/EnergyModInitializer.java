@@ -2,13 +2,14 @@ package team.reborn.energy.minecraft;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import team.reborn.energy.Energy;
 import team.reborn.energy.EnergyHolder;
 import team.reborn.energy.EnergySide;
 import team.reborn.energy.EnergyStorage;
 import team.reborn.energy.EnergyTier;
 
+// TODO: remove alongside the rest of the legacy API.
 public class EnergyModInitializer implements ModInitializer {
 	@Override
 	public void onInitialize() {
@@ -45,7 +46,7 @@ public class EnergyModInitializer implements ModInitializer {
 
 				private void validateNBT() {
 					if (!stack.hasTag()) {
-						stack.setTag(new CompoundTag());
+						stack.setTag(new NbtCompound());
 						stack.getTag().putInt("energy", 0);
 					}
 				}
