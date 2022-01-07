@@ -13,7 +13,7 @@ Currently WIP, the API may change at any time! I am very open to feedback and su
 
 # Including the API in your project
 
-![Latest version](https://img.shields.io/github/v/tag/TechReborn/Energy?label=Latest%20Version)
+Find the latest versions [here](https://maven.fabricmc.net/teamreborn/energy/)
 
 Add the following into your dependencies block in build.gradle
 
