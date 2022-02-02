@@ -20,10 +20,5 @@
     "java": ">=16",
     "minecraft": ">=1.17",
     "fabric": ">=0.40"
-  },
-  "entrypoints": {
-    "main": [
-      "team.reborn.energy.minecraft.EnergyModInitializer"
-    ]
   }
 }
