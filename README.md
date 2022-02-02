@@ -4,8 +4,6 @@ An Energy API for Fabric mods, originally written for TechReborn.
 
 Uses Fabric's API Lookup and Transaction systems.
 
-Currently WIP, the API may change at any time! I am very open to feedback and suggestions on the issue tracker.
-
 # Reference Values
 
 * 1 coal = 4000
@@ -18,7 +16,9 @@ Find the latest versions [here](https://maven.fabricmc.net/teamreborn/energy/)
 Add the following into your dependencies block in build.gradle
 
 ```groovy
-include modApi('teamreborn:energy:<latest_version>')
+include modApi('teamreborn:energy:<latest_version>') {
+    exclude(group: "net.fabricmc.fabric-api")
+}
 ```
 
 # Documentation

@@ -47,26 +47,16 @@ public interface SimpleBatteryItem {
 	long getEnergyMaxOutput();
 
 	/**
-	 * @return The energy stored in the stack.
-	 * @throws IllegalArgumentException If the count of the stack is not exactly 1!
+	 * @return The energy stored in the stack. Count is ignored.
 	 */
 	default long getStoredEnergy(ItemStack stack) {
-		if (stack.getCount() != 1) {
-			throw new IllegalArgumentException("Invalid count: " + stack.getCount());
-		}
-
 		return getStoredEnergyUnchecked(stack);
 	}
 
 	/**
-	 * Set the energy stored in the stack.
-	 * @throws IllegalArgumentException If the count of the stack is not exactly 1!
+	 * Set the energy stored in the stack. Count is ignored.
 	 */
 	default void setStoredEnergy(ItemStack stack, long newAmount) {
-		if (stack.getCount() != 1) {
-			throw new IllegalArgumentException("Invalid count: " + stack.getCount());
-		}
-
 		setStoredEnergyUnchecked(stack, newAmount);
 	}
 
@@ -76,6 +66,10 @@ public interface SimpleBatteryItem {
 	 * @throws IllegalArgumentException If the count of the stack is not exactly 1!
 	 */
 	default boolean tryUseEnergy(ItemStack stack, long amount) {
+		if (stack.getCount() != 1) {
+			throw new IllegalArgumentException("Invalid count: " + stack.getCount());
+		}
+
 		long newAmount = getStoredEnergy(stack) - amount;
 
 		if (newAmount < 0) {
