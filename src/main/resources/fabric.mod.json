@@ -13,7 +13,7 @@
     "sources": "https://github.com/TechReborn/Energy",
     "issues": "https://github.com/TechReborn/Energy/issues"
   },
-  "license": "WTFPL",
+  "license": "MIT",
   "environment": "*",
   "icon": "assets/team_reborn_energy/icon.png",
   "depends": {
