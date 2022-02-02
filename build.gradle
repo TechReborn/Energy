@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.9-SNAPSHOT'
+	id 'fabric-loom' version '0.11-SNAPSHOT'
 	id 'java'
 	id 'maven-publish'
 }
@@ -27,9 +27,9 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modApi fabricApi.module("fabric-transfer-api-v1", project.fabric_version)
 
-	testmodImplementation 'junit:junit:4.12'
+	testmodImplementation 'junit:junit:4.13.2'
 }
 
 processResources {
@@ -53,8 +53,6 @@ java {
 	withSourcesJar()
 }
 
-build.dependsOn sourcesJar
-
 loom {
 	runs {
 		testmodClient {
@@ -72,12 +70,7 @@ publishing {
 			artifactId project.archivesBaseName
 			version project.version
 
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+			from components.java
 		}
 	}
 	repositories {
