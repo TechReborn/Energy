@@ -29,7 +29,7 @@ dependencies {
 
 	modApi fabricApi.module("fabric-transfer-api-v1", project.fabric_version)
 
-	testmodImplementation 'junit:junit:4.13.2'
+	testImplementation 'junit:junit:4.13.2'
 }
 
 processResources {
