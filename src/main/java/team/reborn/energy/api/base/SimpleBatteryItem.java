@@ -57,7 +57,7 @@ public interface SimpleBatteryItem {
 	 * Set the energy stored in the stack. Count is ignored.
 	 */
 	default void setStoredEnergy(ItemStack stack, long newAmount) {
-		setStoredEnergyUnchecked(stack, newAmount);
+		setStoredEnergyUnchecked(stack, Math.max(0,Math.min(getEnergyCapacity(),newAmount));
 	}
 
 	/**
