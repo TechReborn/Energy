@@ -17,9 +17,7 @@
   "environment": "*",
   "icon": "assets/team_reborn_energy/icon.png",
   "depends": {
-    "java": ">=16",
-    "minecraft": ">=1.17",
-    "fabric": ">=0.37.0"
+    "team_reborn_energy": "*"
   },
   "custom": {
     "modmenu:api": true
