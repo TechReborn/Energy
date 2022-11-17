@@ -8,22 +8,20 @@ import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.impl.SimpleItemEnergyStorageImpl;
 
 /**
- * Simple battery-like item. If this is implemented on an item:
+ * Simple battery-like energy containing item. If this is implemented on an item:
  * <ul>
  *     <li>The energy will directly be stored in the NBT.</li>
  *     <li>Helper functions in this class to work with the stored energy can be used.</li>
  *     <li>An EnergyStorage will automatically be provided for queries through {@link EnergyStorage#ITEM}.</li>
  * </ul>
- *
- * @deprecated Use {@link SimpleEnergyItem} instead, it has stack-aware capacity and transfer limits.
  */
-@Deprecated
-public interface SimpleBatteryItem {
+// TODO: Consider adding a tooltip and a recipe input -> output energy transfer handler like RC has.
+public interface SimpleEnergyItem {
 	String ENERGY_KEY = "energy";
 
 	/**
 	 * Return a base energy storage implementation for items, with fixed capacity, and per-operation insertion and extraction limits.
-	 * This is used internally for items that implement SimpleBatteryItem, but it may also be used outside of that.
+	 * This is used internally for items that implement SimpleEnergyItem, but it may also be used outside of that.
 	 * The energy is stored in the {@code energy} tag of the stacks, the same as the constant {@link #ENERGY_KEY}.
 	 *
 	 * <p>Stackable energy containers are supported just fine, and they will distribute energy evenly.
@@ -34,19 +32,22 @@ public interface SimpleBatteryItem {
 	}
 
 	/**
-	 * @return The max energy that can be stored in this item.
+	 * @param stack Current stack.
+	 * @return The max energy that can be stored in this item stack (ignoring current stack size).
 	 */
-	long getEnergyCapacity();
+	long getEnergyCapacity(ItemStack stack);
 
 	/**
-	 * @return The max amount of energy that can be inserted in this item in a single operation.
+	 * @param stack Current stack.
+	 * @return The max amount of energy that can be inserted in this item stack (ignoring current stack size) in a single operation.
 	 */
-	long getEnergyMaxInput();
+	long getEnergyMaxInput(ItemStack stack);
 
 	/**
-	 * @return The max amount of energy that can be extracted from this item in a single operation.
+	 * @param stack Current stack.
+	 * @return The max amount of energy that can be extracted from this item stack (ignoring current stack size) in a single operation.
 	 */
-	long getEnergyMaxOutput();
+	long getEnergyMaxOutput(ItemStack stack);
 
 	/**
 	 * @return The energy stored in the stack. Count is ignored.
@@ -56,7 +57,8 @@ public interface SimpleBatteryItem {
 	}
 
 	/**
-	 * Set the energy stored in the stack. Count is ignored.
+	 * Directly set the energy stored in the stack. Count is ignored.
+	 * It's up to callers to ensure that the new amount is >= 0 and <= capacity.
 	 */
 	default void setStoredEnergy(ItemStack stack, long newAmount) {
 		setStoredEnergyUnchecked(stack, newAmount);

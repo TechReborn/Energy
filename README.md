@@ -4,10 +4,15 @@ An Energy API for Fabric mods, originally written for TechReborn.
 
 Uses Fabric's API Lookup and Transaction systems.
 
-# Reference Values
+# Conventions
+To ensure good interop between all the mods using this API, here are a few conventions that should be followed.
 
-* 1 coal = 4000
-* 1 plank = 750
+* Reference energy values
+  * 1 coal = 4000
+  * 1 plank = 750
+* The system is push-based.
+  * This means that power sources are responsible for pushing power to nearby machines.
+  * Machines and wires should NOT pull power from other sources.
 
 # Including the API in your project
 
@@ -105,7 +110,7 @@ try (Transaction transaction = Transaction.openOuter()) {
 ```
 
 ## Creating chargeable items
-The easiest way to create an item that can be charged by supported mods is by implementing `SimpleBatteryItem` on your item class.
+The easiest way to create an item that can be charged by supported mods is by implementing `SimpleEnergyItem` on your item class.
 The functions should be self-explanatory.
 
 For more complex items, `EnergyStorage.ITEM` may be used directly.

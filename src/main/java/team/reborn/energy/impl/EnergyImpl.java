@@ -1,13 +1,18 @@
 package team.reborn.energy.impl;
 
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import org.jetbrains.annotations.ApiStatus;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleBatteryItem;
+import team.reborn.energy.api.base.SimpleEnergyItem;
 
+@ApiStatus.Internal
 public class EnergyImpl {
 	static {
 		EnergyStorage.ITEM.registerFallback((stack, ctx) -> {
-			if (stack.getItem() instanceof SimpleBatteryItem battery) {
+			if (stack.getItem() instanceof SimpleEnergyItem energyItem) {
+				return SimpleEnergyItem.createStorage(ctx, energyItem.getEnergyCapacity(stack), energyItem.getEnergyMaxInput(stack), energyItem.getEnergyMaxOutput(stack));
+			} else if (stack.getItem() instanceof SimpleBatteryItem battery) {
 				return SimpleBatteryItem.createStorage(ctx, battery.getEnergyCapacity(), battery.getEnergyMaxInput(), battery.getEnergyMaxOutput());
 			} else {
 				return null;

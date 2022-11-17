@@ -12,11 +12,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.EnergyStorageUtil;
-import team.reborn.energy.api.base.SimpleBatteryItem;
+import team.reborn.energy.api.base.SimpleEnergyItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import static org.junit.Assert.*;
-import static team.reborn.energy.api.base.SimpleBatteryItem.ENERGY_KEY;
+import static team.reborn.energy.api.base.SimpleEnergyItem.ENERGY_KEY;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"})
 public class EnergyTests implements ModInitializer {
@@ -79,7 +79,7 @@ public class EnergyTests implements ModInitializer {
 		slot.amount = 2;
 
 		// Create the energy storage
-		EnergyStorage energyStorage = SimpleBatteryItem.createStorage(ctx, 60, 50, 30);
+		EnergyStorage energyStorage = SimpleEnergyItem.createStorage(ctx, 60, 50, 30);
 
 		try (Transaction transaction = Transaction.openOuter()) {
 			assertTrue(energyStorage.supportsInsertion());

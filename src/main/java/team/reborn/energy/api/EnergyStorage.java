@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import team.reborn.energy.api.base.DelegatingEnergyStorage;
-import team.reborn.energy.api.base.SimpleBatteryItem;
+import team.reborn.energy.api.base.SimpleEnergyItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
 import team.reborn.energy.impl.EnergyImpl;
@@ -37,13 +37,18 @@ public interface EnergyStorage {
 	 * The {@code Direction} parameter may never be null.
 	 * Refer to {@link BlockApiLookup} for documentation on how to use this field.
 	 *
+	 * <p>The system is push based. That means that power sources are responsible for pushing power to nearby machines.
+	 * Machines and wires should NOT pull power from other sources.
+	 *
 	 * <p>{@link SimpleEnergyStorage} and {@link SimpleSidedEnergyContainer} are provided as base implementations.
 	 *
 	 * <p>When the operations supported by an energy storage change,
 	 * that is if the return value of {@link EnergyStorage#supportsInsertion} or {@link EnergyStorage#supportsExtraction} changes,
 	 * the storage should notify its neighbors with a block update so that they can refresh their connections if necessary.
 	 *
-	 * <p>May only be queried on the logical server thread, never client-side or from another thread!
+	 * <p>This may be queried safely both on the logical server and on the logical client threads.
+	 * On the server thread (i.e. with a server world), all transfer functionality is always supported.
+	 * On the client thread (i.e. with a client world), contents of queried EnergyStorages are unreliable and should not be modified.
 	 */
 	BlockApiLookup<EnergyStorage, Direction> SIDED =
 			BlockApiLookup.get(new Identifier("teamreborn:sided_energy"), EnergyStorage.class, Direction.class);
@@ -53,7 +58,7 @@ public interface EnergyStorage {
 	 * Querying should always happen through {@link ContainerItemContext#find}.
 	 *
 	 * <p>{@link SimpleItemEnergyStorageImpl} is provided as an implementation example.
-	 * Instances of it can be optained through {@link SimpleBatteryItem#createStorage}.
+	 * Instances of it can be optained through {@link SimpleEnergyItem#createStorage}.
 	 * Custom implementations should treat the context as a wrapper around a single slot,
 	 * and always check the current item variant and amount before any operation, like {@code SimpleItemEnergyStorageImpl} does it.
 	 * The check can be handled by {@link DelegatingEnergyStorage}.
