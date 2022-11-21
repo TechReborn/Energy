@@ -7,14 +7,16 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.DelegatingEnergyStorage;
-import team.reborn.energy.api.base.SimpleBatteryItem;
+import team.reborn.energy.api.base.SimpleEnergyItem;
 
 /**
  * Note: instances of this class do not perform any context validation,
  * that is handled by the DelegatingEnergyStorage they are wrapped behind.
  */
+@ApiStatus.Internal
 @SuppressWarnings({"deprecation", "UnstableApiUsage"})
 public class SimpleItemEnergyStorageImpl implements EnergyStorage {
 	public static EnergyStorage createSimpleStorage(ContainerItemContext ctx, long capacity, long maxInsert, long maxExtract) {
@@ -46,7 +48,7 @@ public class SimpleItemEnergyStorageImpl implements EnergyStorage {
 	 */
 	private boolean trySetEnergy(long energyAmountPerCount, long count, TransactionContext transaction) {
 		ItemStack newStack = ctx.getItemVariant().toStack();
-		SimpleBatteryItem.setStoredEnergyUnchecked(newStack, energyAmountPerCount);
+		SimpleEnergyItem.setStoredEnergyUnchecked(newStack, energyAmountPerCount);
 		ItemVariant newVariant = ItemVariant.of(newStack);
 
 		// Try to convert exactly `count` items.
@@ -106,7 +108,7 @@ public class SimpleItemEnergyStorageImpl implements EnergyStorage {
 
 	@Override
 	public long getAmount() {
-		return ctx.getAmount() * SimpleBatteryItem.getStoredEnergyUnchecked(ctx.getItemVariant().getNbt());
+		return ctx.getAmount() * SimpleEnergyItem.getStoredEnergyUnchecked(ctx.getItemVariant().getNbt());
 	}
 
 	@Override

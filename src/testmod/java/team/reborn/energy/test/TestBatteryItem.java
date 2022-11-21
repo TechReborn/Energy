@@ -1,9 +1,10 @@
 package team.reborn.energy.test;
 
 import net.minecraft.item.Item;
-import team.reborn.energy.api.base.SimpleBatteryItem;
+import net.minecraft.item.ItemStack;
+import team.reborn.energy.api.base.SimpleEnergyItem;
 
-public class TestBatteryItem extends Item implements SimpleBatteryItem {
+public class TestBatteryItem extends Item implements SimpleEnergyItem {
 	private final long capacity, maxInput, maxOutput;
 
 	public TestBatteryItem(long capacity, long maxInput, long maxOutput) {
@@ -14,17 +15,17 @@ public class TestBatteryItem extends Item implements SimpleBatteryItem {
 	}
 
 	@Override
-	public long getEnergyCapacity() {
+	public long getEnergyCapacity(ItemStack stack) {
 		return capacity;
 	}
 
 	@Override
-	public long getEnergyMaxInput() {
+	public long getEnergyMaxInput(ItemStack stack) {
 		return maxInput;
 	}
 
 	@Override
-	public long getEnergyMaxOutput() {
+	public long getEnergyMaxOutput(ItemStack stack) {
 		return maxOutput;
 	}
 }
