@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.DelegatingEnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
@@ -34,7 +35,7 @@ import team.reborn.energy.impl.SimpleItemEnergyStorageImpl;
 public interface EnergyStorage {
 	/**
 	 * Sided block access to energy storages.
-	 * The {@code Direction} parameter may never be null.
+	 * The {@code Direction} parameter may be null, meaning that the full storage (ignoring side restrictions) should be queried.
 	 * Refer to {@link BlockApiLookup} for documentation on how to use this field.
 	 *
 	 * <p>The system is push based. That means that power sources are responsible for pushing power to nearby machines.
@@ -50,7 +51,7 @@ public interface EnergyStorage {
 	 * On the server thread (i.e. with a server world), all transfer functionality is always supported.
 	 * On the client thread (i.e. with a client world), contents of queried EnergyStorages are unreliable and should not be modified.
 	 */
-	BlockApiLookup<EnergyStorage, Direction> SIDED =
+	BlockApiLookup<EnergyStorage, @Nullable Direction> SIDED =
 			BlockApiLookup.get(new Identifier("teamreborn:sided_energy"), EnergyStorage.class, Direction.class);
 
 	/**
