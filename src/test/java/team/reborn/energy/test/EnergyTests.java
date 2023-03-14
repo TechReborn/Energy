@@ -1,42 +1,48 @@
 package team.reborn.energy.test;
 
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.Bootstrap;
+import net.minecraft.SharedConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.EnergyStorageUtil;
 import team.reborn.energy.api.base.SimpleEnergyItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static team.reborn.energy.api.base.SimpleEnergyItem.ENERGY_KEY;
 
-@SuppressWarnings({"UnstableApiUsage", "deprecation"})
-public class EnergyTests implements ModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger("TR Energy Tests");
+@SuppressWarnings("UnstableApiUsage")
+public class EnergyTests {
+	private static TestBatteryItem item;
 
-	@Override
-	public void onInitialize() {
-		testEmptyStorage();
-		testSimpleEnergyStorage();
-		testItemEnergyStorage();
-		testBatteryItem();
-		LOGGER.info("TR Energy tests successful!");
+	@BeforeAll
+	public static void setup() {
+		SharedConstants.createGameVersion();
+		Bootstrap.initialize();
+
+		item = new TestBatteryItem(60, 50, 50);
+		Registry.register(Registries.ITEM, new Identifier("energy_test", "battery"), item);
 	}
 
+	@Test
 	public void testEmptyStorage() {
 		try (Transaction transaction = Transaction.openOuter()) {
 			ensureEmpty(EnergyStorage.EMPTY, transaction);
 		}
 	}
 
+	@Test
 	public void testSimpleEnergyStorage() {
 		SimpleEnergyStorage simpleStorage = new SimpleEnergyStorage(100, 5, 10);
 		assertEquals(0, simpleStorage.getAmount());
@@ -60,6 +66,7 @@ public class EnergyTests implements ModInitializer {
 		assertEquals(8, simpleStorage.getAmount());
 	}
 
+	@Test
 	public void testItemEnergyStorage() {
 		SingleVariantStorage<ItemVariant> slot = new SingleVariantStorage<>() {
 			@Override
@@ -103,6 +110,7 @@ public class EnergyTests implements ModInitializer {
 		}
 	}
 
+	@Test
 	private static void ensureEmpty(EnergyStorage energyStorage, TransactionContext transaction) {
 		assertFalse(energyStorage.supportsInsertion());
 		assertFalse(energyStorage.supportsExtraction());
@@ -112,8 +120,8 @@ public class EnergyTests implements ModInitializer {
 		assertEquals(0, energyStorage.getCapacity());
 	}
 
+	@Test
 	public void testBatteryItem() {
-		TestBatteryItem item = new TestBatteryItem(60, 50, 50);
 		ItemStack stack = new ItemStack(item);
 
 		assertEquals(0, item.getStoredEnergy(stack));

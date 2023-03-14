@@ -1,11 +1,11 @@
 plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
+	id 'fabric-loom' version '1.1-SNAPSHOT'
 	id 'java'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 def ENV = System.getenv()
 
@@ -13,12 +13,11 @@ archivesBaseName = "energy"
 group = "teamreborn"
 version = project.mod_version
 
-sourceSets {
-	testmod {
-		compileClasspath += sourceSets.main.compileClasspath
-		runtimeClasspath += sourceSets.main.runtimeClasspath
-		compileClasspath += sourceSets.main.output
-		runtimeClasspath += sourceSets.main.output
+loom {
+	addRemapConfiguration("testModImplementation") {
+		targetConfigurationName = "test"
+		onCompileClasspath = true
+		onRuntimeClasspath = true
 	}
 }
 
@@ -29,7 +28,12 @@ dependencies {
 
 	modApi fabricApi.module("fabric-transfer-api-v1", project.fabric_version)
 
-	testmodImplementation 'junit:junit:4.13.2'
+	testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+	testModImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
+}
+
+test {
+	useJUnitPlatform()
 }
 
 processResources {
@@ -42,7 +46,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 16
+	it.options.release = 17
 }
 
 jar {
@@ -51,16 +55,6 @@ jar {
 
 java {
 	withSourcesJar()
-}
-
-loom {
-	runs {
-		testmodClient {
-			client()
-			name = "Testmod Client"
-			source sourceSets.testmod
-		}
-	}
 }
 
 publishing {
