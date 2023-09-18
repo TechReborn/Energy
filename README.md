@@ -22,7 +22,7 @@ Add the following into your dependencies block in build.gradle
 
 ```groovy
 include modApi('teamreborn:energy:<latest_version>') {
-    exclude(group: "net.fabricmc.fabric-api")
+    transitive = false
 }
 ```
 
