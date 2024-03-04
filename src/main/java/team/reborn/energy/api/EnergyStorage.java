@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.component.DataComponentType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,7 @@ import team.reborn.energy.impl.SimpleItemEnergyStorageImpl;
  *
  * @see Transaction
  */
-@SuppressWarnings({"unused", "deprecation", "UnstableApiUsage"})
+@SuppressWarnings({"unused"})
 public interface EnergyStorage {
 	/**
 	 * Sided block access to energy storages.
@@ -74,6 +75,11 @@ public interface EnergyStorage {
 	 * Always empty energy storage.
 	 */
 	EnergyStorage EMPTY = EnergyImpl.EMPTY;
+
+	/**
+	 * A {@link DataComponentType} for energy storage.
+	 */
+	DataComponentType<Long> ENERGY_COMPONENT = EnergyImpl.ENERGY_COMPONENT;
 
 	/**
 	 * Return false if calling {@link #insert} will absolutely always return 0, or true otherwise or in doubt.

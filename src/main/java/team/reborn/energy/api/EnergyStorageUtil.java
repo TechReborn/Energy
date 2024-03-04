@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Helper functions to work with {@link EnergyStorage}s.
  */
-@SuppressWarnings({"unused", "deprecation", "UnstableApiUsage"})
+@SuppressWarnings({"unused"})
 public class EnergyStorageUtil {
 	/**
 	 * Move energy between two energy storages, and return the amount that was successfully moved.
