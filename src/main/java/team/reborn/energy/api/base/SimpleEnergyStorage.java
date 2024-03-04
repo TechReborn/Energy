@@ -9,7 +9,7 @@ import team.reborn.energy.api.EnergyStorage;
  * A base energy storage implementation with fixed capacity, and per-operation insertion and extraction limits.
  * Make sure to override {@link #onFinalCommit} to call {@code markDirty} and similar functions.
  */
-@SuppressWarnings({"unused", "deprecation", "UnstableApiUsage"})
+@SuppressWarnings({"unused"})
 public class SimpleEnergyStorage extends SnapshotParticipant<Long> implements EnergyStorage {
 	public long amount = 0;
 	public final long capacity;

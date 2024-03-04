@@ -20,9 +20,8 @@ import team.reborn.energy.api.base.SimpleEnergyItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static team.reborn.energy.api.base.SimpleEnergyItem.ENERGY_KEY;
+import static team.reborn.energy.api.base.SimpleEnergyItem.getStoredEnergyUnchecked;
 
-@SuppressWarnings("UnstableApiUsage")
 public class EnergyTests {
 	private static TestBatteryItem item;
 
@@ -93,13 +92,13 @@ public class EnergyTests {
 			assertTrue(energyStorage.supportsExtraction());
 			// Insertion of 200 should only insert 100 (50 per item).
 			assertEquals(100, energyStorage.insert(200, transaction));
-			assertEquals(50, slot.variant.getNbt().getLong(ENERGY_KEY));
+			assertEquals(50, getStoredEnergyUnchecked(slot.variant));
 			// Insertion of 200 should only insert 20 (10 per item) due to the capacity.
 			assertEquals(20, energyStorage.insert(200, transaction));
-			assertEquals(60, slot.variant.getNbt().getLong(ENERGY_KEY));
+			assertEquals(60, getStoredEnergyUnchecked(slot.variant));
 			// Extraction of 30 should extract 30 (15 per item).
 			assertEquals(30, energyStorage.extract(30, transaction));
-			assertEquals(45, slot.variant.getNbt().getLong(ENERGY_KEY));
+			assertEquals(45, getStoredEnergyUnchecked(slot.variant));
 			// Check amount and capacity.
 			assertEquals(90, energyStorage.getAmount());
 			assertEquals(120, energyStorage.getCapacity());
@@ -110,7 +109,6 @@ public class EnergyTests {
 		}
 	}
 
-	@Test
 	private static void ensureEmpty(EnergyStorage energyStorage, TransactionContext transaction) {
 		assertFalse(energyStorage.supportsInsertion());
 		assertFalse(energyStorage.supportsExtraction());
@@ -129,5 +127,32 @@ public class EnergyTests {
 
 		item.setStoredEnergy(stack, 10);
 		assertEquals(10, item.getStoredEnergy(stack));
+	}
+
+	@Test
+	public void testGetStackEnergy() {
+		ItemStack stack = new ItemStack(item);
+		ItemVariant variant = ItemVariant.of(stack);
+
+		assertEquals(0L, SimpleEnergyItem.getStoredEnergyUnchecked(stack));
+		assertEquals(0L, SimpleEnergyItem.getStoredEnergyUnchecked(variant));
+		assertNull(stack.get(EnergyStorage.ENERGY_COMPONENT));
+		assertNull(variant.getComponents().get(EnergyStorage.ENERGY_COMPONENT));
+
+		SimpleEnergyItem.setStoredEnergyUnchecked(stack, 1000L);
+		variant = ItemVariant.of(stack);
+
+		assertEquals(1000L, SimpleEnergyItem.getStoredEnergyUnchecked(stack));
+		assertEquals(1000L, SimpleEnergyItem.getStoredEnergyUnchecked(variant));
+		assertNotNull(stack.get(EnergyStorage.ENERGY_COMPONENT));
+		assertNotNull(variant.getComponents().get(EnergyStorage.ENERGY_COMPONENT));
+
+		SimpleEnergyItem.setStoredEnergyUnchecked(stack, 0L);
+		variant = ItemVariant.of(stack);
+
+		assertEquals(0L, SimpleEnergyItem.getStoredEnergyUnchecked(stack));
+		assertEquals(0L, SimpleEnergyItem.getStoredEnergyUnchecked(variant));
+		assertNull(stack.get(EnergyStorage.ENERGY_COMPONENT));
+		assertNull(variant.getComponents().get(EnergyStorage.ENERGY_COMPONENT));
 	}
 }

@@ -17,7 +17,6 @@ import team.reborn.energy.api.base.SimpleEnergyItem;
  * that is handled by the DelegatingEnergyStorage they are wrapped behind.
  */
 @ApiStatus.Internal
-@SuppressWarnings({"deprecation", "UnstableApiUsage"})
 public class SimpleItemEnergyStorageImpl implements EnergyStorage {
 	public static EnergyStorage createSimpleStorage(ContainerItemContext ctx, long capacity, long maxInsert, long maxExtract) {
 		StoragePreconditions.notNegative(capacity);
@@ -108,7 +107,7 @@ public class SimpleItemEnergyStorageImpl implements EnergyStorage {
 
 	@Override
 	public long getAmount() {
-		return ctx.getAmount() * SimpleEnergyItem.getStoredEnergyUnchecked(ctx.getItemVariant().getNbt());
+		return ctx.getAmount() * SimpleEnergyItem.getStoredEnergyUnchecked(ctx.getItemVariant().getComponents());
 	}
 
 	@Override

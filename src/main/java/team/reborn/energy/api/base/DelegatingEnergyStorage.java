@@ -14,7 +14,6 @@ import java.util.function.Supplier;
  * with an optional boolean supplier to check that the storage is still valid.
  * This can be used for easier item energy storage implementation, or overridden for custom delegation logic.
  */
-@SuppressWarnings({"deprecation", "UnstableApiUsage"})
 public class DelegatingEnergyStorage implements EnergyStorage {
 	protected final Supplier<EnergyStorage> backingStorage;
 	protected final BooleanSupplier validPredicate;

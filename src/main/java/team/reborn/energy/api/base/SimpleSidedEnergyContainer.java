@@ -12,7 +12,7 @@ import team.reborn.energy.api.EnergyStorage;
  * {@link #getSideStorage} can be used to get an {@code EnergyStorage} implementation for a given side.
  * Make sure to override {@link #onFinalCommit} to call {@code markDirty} and similar functions.
  */
-@SuppressWarnings({"unused", "deprecation", "UnstableApiUsage"})
+@SuppressWarnings({"unused"})
 public abstract class SimpleSidedEnergyContainer extends SnapshotParticipant<Long> {
 	public long amount = 0;
 	private final SideStorage[] sideStorages = new SideStorage[7];
