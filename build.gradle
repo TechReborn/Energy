@@ -60,9 +60,9 @@ java {
 
 publishing {
 	publications {
-		maven(MavenPublication) {
+		create("maven", MavenPublication) {
 			groupId 'teamreborn'
-			artifactId project.archivesBaseName
+			artifactId project.base.archivesName.get()
 			version project.version
 
 			from components.java
