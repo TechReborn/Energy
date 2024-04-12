@@ -67,8 +67,8 @@ public class EnergyImpl {
 	);
 
 	private static Codec<Long> nonNegativeLong() {
-		return Codecs.validate(Codec.LONG, (Long value) -> {
-			if (value.compareTo(0L) >= 0 && value.compareTo(Long.MAX_VALUE) <= 0) {
+		return Codec.LONG.validate((Long value) -> {
+			if (value >= 0) {
 				return DataResult.success(value);
 			}
 

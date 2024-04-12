@@ -77,7 +77,11 @@ public interface EnergyStorage {
 	EnergyStorage EMPTY = EnergyImpl.EMPTY;
 
 	/**
-	 * A {@link DataComponentType} for energy storage.
+	 * Stock data component type for energy.
+	 *
+	 * <p><b>This component should only be used on item stacks from your mod.</b>
+	 * Otherwise, do not query it or assume it exists.
+	 * Inter-mod energy interactions should happen using {@link #ITEM}.</b>
 	 */
 	DataComponentType<Long> ENERGY_COMPONENT = EnergyImpl.ENERGY_COMPONENT;
 
