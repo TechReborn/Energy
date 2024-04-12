@@ -18,12 +18,13 @@ To ensure good interop between all the mods using this API, here are a few conve
 
 Find the latest versions [here](https://maven.fabricmc.net/teamreborn/energy/)
 
+- Version 3.x should be used for Minecraft 1.19.4 -> 1.20.4
+- Version 4.x should be used for Minecraft 1.20.5 or later
+
 Add the following into your dependencies block in build.gradle
 
 ```groovy
-include modApi('teamreborn:energy:<latest_version>') {
-    transitive = false
-}
+include modApi('teamreborn:energy:<latest_version>')
 ```
 
 # Documentation

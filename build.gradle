@@ -1,15 +1,14 @@
 plugins {
-	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'java'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+base {
+	archivesName = "energy"
+}
 
 def ENV = System.getenv()
-
-archivesBaseName = "energy"
 group = "teamreborn"
 version = project.mod_version
 
@@ -46,7 +45,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 17
+	it.options.release = 21
 }
 
 jar {
@@ -55,13 +54,15 @@ jar {
 
 java {
 	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 publishing {
 	publications {
-		maven(MavenPublication) {
+		create("maven", MavenPublication) {
 			groupId 'teamreborn'
-			artifactId project.archivesBaseName
+			artifactId project.base.archivesName.get()
 			version project.version
 
 			from components.java
