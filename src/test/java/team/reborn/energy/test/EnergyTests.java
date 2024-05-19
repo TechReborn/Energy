@@ -18,6 +18,7 @@ import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.EnergyStorageUtil;
 import team.reborn.energy.api.base.SimpleEnergyItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
+import team.reborn.energy.impl.EnergyImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static team.reborn.energy.api.base.SimpleEnergyItem.getStoredEnergyUnchecked;
@@ -29,6 +30,7 @@ public class EnergyTests {
 	public static void setup() {
 		SharedConstants.createGameVersion();
 		Bootstrap.initialize();
+		EnergyImpl.init();
 
 		item = new TestBatteryItem(60, 50, 50);
 		Registry.register(Registries.ITEM, new Identifier("energy_test", "battery"), item);

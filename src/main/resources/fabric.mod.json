@@ -16,6 +16,11 @@
   "license": "MIT",
   "environment": "*",
   "icon": "assets/team_reborn_energy/icon.png",
+  "entrypoints": {
+    "main": [
+      "team.reborn.energy.impl.EnergyImpl::init"
+    ]
+  },
   "depends": {
     "java": ">=17",
     "minecraft": ">=1.20.5-",

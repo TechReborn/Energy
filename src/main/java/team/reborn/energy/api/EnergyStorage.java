@@ -13,8 +13,11 @@ import team.reborn.energy.api.base.DelegatingEnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
+import team.reborn.energy.impl.EmptyEnergyStorage;
 import team.reborn.energy.impl.EnergyImpl;
 import team.reborn.energy.impl.SimpleItemEnergyStorageImpl;
+
+import java.util.Objects;
 
 /**
  * An object that can store energy.
@@ -74,7 +77,7 @@ public interface EnergyStorage {
 	/**
 	 * Always empty energy storage.
 	 */
-	EnergyStorage EMPTY = EnergyImpl.EMPTY;
+	EnergyStorage EMPTY = Objects.requireNonNull(EmptyEnergyStorage.EMPTY);
 
 	/**
 	 * Stock data component type for energy.
@@ -83,7 +86,7 @@ public interface EnergyStorage {
 	 * Otherwise, do not query it or assume it exists.
 	 * Inter-mod energy interactions should happen using {@link #ITEM}.</b>
 	 */
-	DataComponentType<Long> ENERGY_COMPONENT = EnergyImpl.ENERGY_COMPONENT;
+	DataComponentType<Long> ENERGY_COMPONENT = Objects.requireNonNull(EnergyImpl.ENERGY_COMPONENT);
 
 	/**
 	 * Return false if calling {@link #insert} will absolutely always return 0, or true otherwise or in doubt.
