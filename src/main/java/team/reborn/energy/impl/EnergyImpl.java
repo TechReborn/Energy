@@ -2,7 +2,7 @@ package team.reborn.energy.impl;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -13,13 +13,13 @@ import team.reborn.energy.api.base.SimpleEnergyItem;
 
 @ApiStatus.Internal
 public class EnergyImpl {
-	public static final DataComponentType<Long> ENERGY_COMPONENT = DataComponentType.<Long>builder()
+	public static final ComponentType<Long> ENERGY_COMPONENT = ComponentType.<Long>builder()
 		.codec(nonNegativeLong())
 		.packetCodec(PacketCodecs.VAR_LONG)
 		.build();
 
 	public static void init() {
-		Registry.register(Registries.DATA_COMPONENT_TYPE, new Identifier("team_reborn_energy", "energy"), ENERGY_COMPONENT);
+		Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of("team_reborn_energy", "energy"), ENERGY_COMPONENT);
 		EnergyStorage.ITEM.registerFallback((stack, ctx) -> {
 			if (stack.getItem() instanceof SimpleEnergyItem energyItem) {
 				return SimpleEnergyItem.createStorage(ctx, energyItem.getEnergyCapacity(stack), energyItem.getEnergyMaxInput(stack), energyItem.getEnergyMaxOutput(stack));

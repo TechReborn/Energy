@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +56,7 @@ public interface EnergyStorage {
 	 * On the client thread (i.e. with a client world), contents of queried EnergyStorages are unreliable and should not be modified.
 	 */
 	BlockApiLookup<EnergyStorage, @Nullable Direction> SIDED =
-			BlockApiLookup.get(new Identifier("teamreborn:sided_energy"), EnergyStorage.class, Direction.class);
+			BlockApiLookup.get(Identifier.of("teamreborn", "sided_energy"), EnergyStorage.class, Direction.class);
 
 	/**
 	 * Item access to energy storages.
@@ -72,7 +72,7 @@ public interface EnergyStorage {
 	 * Returned APIs should behave the same regardless of the logical side.
 	 */
 	ItemApiLookup<EnergyStorage, ContainerItemContext> ITEM =
-			ItemApiLookup.get(new Identifier("teamreborn:energy"), EnergyStorage.class, ContainerItemContext.class);
+			ItemApiLookup.get(Identifier.of("teamreborn", "energy"), EnergyStorage.class, ContainerItemContext.class);
 
 	/**
 	 * Always empty energy storage.
@@ -86,7 +86,7 @@ public interface EnergyStorage {
 	 * Otherwise, do not query it or assume it exists.
 	 * Inter-mod energy interactions should happen using {@link #ITEM}.</b>
 	 */
-	DataComponentType<Long> ENERGY_COMPONENT = Objects.requireNonNull(EnergyImpl.ENERGY_COMPONENT);
+	ComponentType<Long> ENERGY_COMPONENT = Objects.requireNonNull(EnergyImpl.ENERGY_COMPONENT);
 
 	/**
 	 * Return false if calling {@link #insert} will absolutely always return 0, or true otherwise or in doubt.

@@ -33,7 +33,7 @@ public class EnergyTests {
 		EnergyImpl.init();
 
 		item = new TestBatteryItem(60, 50, 50);
-		Registry.register(Registries.ITEM, new Identifier("energy_test", "battery"), item);
+		Registry.register(Registries.ITEM, Identifier.of("energy_test", "battery"), item);
 	}
 
 	@Test
