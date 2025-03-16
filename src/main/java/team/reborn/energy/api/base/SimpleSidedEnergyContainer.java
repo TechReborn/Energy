@@ -19,7 +19,7 @@ public abstract class SimpleSidedEnergyContainer extends SnapshotParticipant<Lon
 
 	public SimpleSidedEnergyContainer() {
 		for (int i = 0; i < 7; ++i) {
-			sideStorages[i] = new SideStorage(i == 6 ? null : Direction.byId(i));
+			sideStorages[i] = new SideStorage(i == 6 ? null : Direction.byIndex(i));
 		}
 	}
 
@@ -42,7 +42,7 @@ public abstract class SimpleSidedEnergyContainer extends SnapshotParticipant<Lon
 	 * @return An {@link EnergyStorage} implementation for the passed side.
 	 */
 	public EnergyStorage getSideStorage(@Nullable Direction side) {
-		return sideStorages[side == null ? 6 : side.getId()];
+		return sideStorages[side == null ? 6 : side.getIndex()];
 	}
 
 	@Override

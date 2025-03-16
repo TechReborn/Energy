@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 	id 'java'
 	id 'maven-publish'
 }
@@ -61,9 +61,9 @@ java {
 publishing {
 	publications {
 		create("maven", MavenPublication) {
-			groupId 'teamreborn'
-			artifactId project.base.archivesName.get()
-			version project.version
+			groupId = 'teamreborn'
+			artifactId = project.base.archivesName.get()
+			version = project.version
 
 			from components.java
 		}
@@ -71,10 +71,10 @@ publishing {
 	repositories {
 		if (ENV.MAVEN_URL) {
 			maven {
-				url ENV.MAVEN_URL
+				url = ENV.MAVEN_URL
 				credentials {
-					username ENV.MAVEN_USERNAME
-					password ENV.MAVEN_PASSWORD
+					username = ENV.MAVEN_USERNAME
+					password = ENV.MAVEN_PASSWORD
 				}
 			}
 		}
@@ -82,7 +82,7 @@ publishing {
 }
 
 // A task to ensure that the version being released has not already been released.
-task checkVersion {
+tasks.register('checkVersion') {
 	doFirst {
 		def xml = new URL("https://maven.fabricmc.net/teamreborn/energy/maven-metadata.xml").text
 		def metadata = new XmlSlurper().parseText(xml)
