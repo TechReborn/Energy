@@ -2,24 +2,24 @@ package team.reborn.energy.impl;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.minecraft.component.ComponentType;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyItem;
 
 @ApiStatus.Internal
 public class EnergyImpl {
-	public static final ComponentType<Long> ENERGY_COMPONENT = ComponentType.<Long>builder()
-		.codec(nonNegativeLong())
-		.packetCodec(PacketCodecs.VAR_LONG)
+	public static final DataComponentType<Long> ENERGY_COMPONENT = DataComponentType.<Long>builder()
+		.persistent(nonNegativeLong())
+		.networkSynchronized(ByteBufCodecs.VAR_LONG)
 		.build();
 
 	public static void init() {
-		Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of("team_reborn_energy", "energy"), ENERGY_COMPONENT);
+		Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Identifier.fromNamespaceAndPath("team_reborn_energy", "energy"), ENERGY_COMPONENT);
 		EnergyStorage.ITEM.registerFallback((stack, ctx) -> {
 			if (stack.getItem() instanceof SimpleEnergyItem energyItem) {
 				return SimpleEnergyItem.createStorage(ctx, energyItem.getEnergyCapacity(stack), energyItem.getEnergyMaxInput(stack), energyItem.getEnergyMaxOutput(stack));

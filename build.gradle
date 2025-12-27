@@ -1,5 +1,7 @@
+import groovy.xml.XmlSlurper
+
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version '1.14-SNAPSHOT'
 	id 'java'
 	id 'maven-publish'
 }
@@ -12,23 +14,15 @@ def ENV = System.getenv()
 group = "teamreborn"
 version = project.mod_version
 
-loom {
-	addRemapConfiguration("testModImplementation") {
-		targetConfigurationName = "test"
-		onCompileClasspath = true
-		onRuntimeClasspath = true
-	}
-}
-
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modApi fabricApi.module("fabric-transfer-api-v1", project.fabric_version)
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	api fabricApi.module("fabric-transfer-api-v1", project.fabric_version)
 
 	testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
-	testModImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
+	testImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric_version)
 }
 
 test {
@@ -45,7 +39,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 21
+	it.options.release = 25
 }
 
 jar {
@@ -54,8 +48,8 @@ jar {
 
 java {
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 publishing {

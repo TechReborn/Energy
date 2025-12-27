@@ -3,7 +3,7 @@ package team.reborn.energy.api.base;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
 
@@ -19,7 +19,7 @@ public abstract class SimpleSidedEnergyContainer extends SnapshotParticipant<Lon
 
 	public SimpleSidedEnergyContainer() {
 		for (int i = 0; i < 7; ++i) {
-			sideStorages[i] = new SideStorage(i == 6 ? null : Direction.byIndex(i));
+			sideStorages[i] = new SideStorage(i == 6 ? null : Direction.from3DDataValue(i));
 		}
 	}
 
@@ -42,7 +42,7 @@ public abstract class SimpleSidedEnergyContainer extends SnapshotParticipant<Lon
 	 * @return An {@link EnergyStorage} implementation for the passed side.
 	 */
 	public EnergyStorage getSideStorage(@Nullable Direction side) {
-		return sideStorages[side == null ? 6 : side.getIndex()];
+		return sideStorages[side == null ? 6 : side.get3DDataValue()];
 	}
 
 	@Override

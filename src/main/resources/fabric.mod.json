@@ -22,8 +22,8 @@
     ]
   },
   "depends": {
-    "java": ">=21",
-    "minecraft": ">=1.21.5-",
+    "java": ">=25",
+    "minecraft": ">=26.1-",
     "fabric-transfer-api-v1": ">=5.1.0"
   }
 }
