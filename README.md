@@ -43,16 +43,16 @@ public class MyBlockEntity extends BlockEntity {
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(CAPACITY, MAX_INSERT, MAX_EXTRACT) {
         @Override
         protected void onFinalCommit() {
-            markDirty();
+            setChanged();
         }
     };
     
     // Use the energy internally, for example in tick()
     public void tick() {
-        if (!world.isClient && energyStorage.amount >= 10) {
+        if (!level.isClientSide() && energyStorage.amount >= 10) {
             energyStorage.amount -= 10;
             // do something with the 10 energy we just used.
-            markDirty();
+            setChanged();
         }
     }
     
@@ -78,10 +78,10 @@ EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, pos, direction);
 Get an adjacent energy storage:
 ```groovy
 // Known things
-World world; BlockPos currentPos; Direction adjacentDirection;
+Level level; BlockPos currentPos; Direction adjacentDirection;
 // Get adjacent energy storage, or null if there is none
 @Nullable
-EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, currentPos.offset(adjacentDirection), adjacentDirection.getOpposite());
+EnergyStorage maybeStorage = EnergyStorage.SIDED.find(level, currentPos.relative(adjacentDirection), adjacentDirection.getOpposite());
 ```
 Move energy between two storages:
 ```groovy

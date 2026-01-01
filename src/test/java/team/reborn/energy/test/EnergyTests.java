@@ -5,13 +5,13 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.Bootstrap;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import team.reborn.energy.api.EnergyStorage;
@@ -28,12 +28,12 @@ public class EnergyTests {
 
 	@BeforeAll
 	public static void setup() {
-		SharedConstants.createGameVersion();
-		Bootstrap.initialize();
+		SharedConstants.tryDetectVersion();
+		Bootstrap.bootStrap();
 		EnergyImpl.init();
 
 		item = new TestBatteryItem(60, 50, 50);
-		Registry.register(Registries.ITEM, Identifier.of("energy_test", "battery"), item);
+		Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath("energy_test", "battery"), item);
 	}
 
 	@Test

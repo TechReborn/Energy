@@ -2,8 +2,9 @@ package team.reborn.energy.api.base;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.impl.SimpleItemEnergyStorageImpl;
@@ -97,15 +98,8 @@ public interface SimpleEnergyItem {
 		return getStoredEnergyUnchecked(variant.getComponents());
 	}
 
-	static long getStoredEnergyUnchecked(ComponentChanges components) {
-		@Nullable Optional<Long> energy = (Optional<Long>) components.get(EnergyStorage.ENERGY_COMPONENT);
-
-		//noinspection OptionalAssignedToNull
-		if (energy != null) {
-			return energy.orElse(0L);
-		}
-
-		return 0;
+	static long getStoredEnergyUnchecked(DataComponentMap components) {
+		return components.getOrDefault(EnergyStorage.ENERGY_COMPONENT, 0L);
 	}
 
 	/**
